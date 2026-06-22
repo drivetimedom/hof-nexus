@@ -274,7 +274,7 @@ function PrivacyPolicyPage() {
                 <Link to="/privacy-policy" className="transition hover:text-foreground">
                   Política de Privacidade
                 </Link>
-                <Link to="/terms-of-use" className="transition hover:text-foreground">
+                <Link to="/terms-of-service" className="transition hover:text-foreground">
                   Termos de Uso
                 </Link>
                 <a href="mailto:contato@timedom.com.br" className="inline-flex items-center gap-1 transition hover:text-foreground">
