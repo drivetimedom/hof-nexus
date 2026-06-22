@@ -241,7 +241,7 @@ function PrivacyPolicyPage() {
                     </span>
                     {section.title}
                   </h2>
-                  <div className="prose prose-invert prose-p:my-3 prose-ul:my-3 prose-li:my-1 max-w-none text-sm leading-relaxed text-muted-foreground sm:text-base [&_p]:text-muted-foreground [&_li]:text-muted-foreground">
+                  <div className="space-y-3 pl-0 text-sm leading-relaxed text-muted-foreground sm:pl-11 sm:text-base">
                     {section.content}
                   </div>
                 </section>
