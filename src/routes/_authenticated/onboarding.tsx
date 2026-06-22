@@ -104,9 +104,9 @@ function OnboardingPage() {
           {connected && (
             <Step2
               accounts={
-                s?.meta && "availableAccounts" in s.meta ? s.meta.availableAccounts : []
+                s?.meta && "availableAccounts" in s.meta ? s.meta.availableAccounts ?? [] : []
               }
-              selectedId={s?.meta && "adAccountId" in s.meta ? s.meta.adAccountId : null}
+              selectedId={s?.meta && "adAccountId" in s.meta ? s.meta.adAccountId ?? null : null}
               picked={picked}
               onPick={setPicked}
               onConfirm={() => picked && selectMutation.mutate(picked)}
@@ -115,7 +115,7 @@ function OnboardingPage() {
           )}
           {selected && (
             <Step3
-              lastSyncedAt={s?.meta && "lastSyncedAt" in s.meta ? s.meta.lastSyncedAt : null}
+              lastSyncedAt={s?.meta && "lastSyncedAt" in s.meta ? s.meta.lastSyncedAt ?? null : null}
               loading={syncMutation.isPending}
               onSync={() => syncMutation.mutate()}
             />
