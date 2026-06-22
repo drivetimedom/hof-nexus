@@ -30,10 +30,10 @@ const SECTIONS = [
     title: "Introdução",
     content: (
       <>
-        <p>
+        <p className="text-muted-foreground">
           O HOF Circle Analytics valoriza a privacidade e a proteção dos dados pessoais de seus usuários.
         </p>
-        <p>
+        <p className="text-muted-foreground">
           Esta Política de Privacidade descreve como coletamos, utilizamos, armazenamos e protegemos informações durante o uso da plataforma.
         </p>
       </>
