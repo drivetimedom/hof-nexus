@@ -82,7 +82,7 @@ function DashboardPage() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-          {(hasData ? kpis : fallbackKpis).map((k, idx) => (
+          {(hasData ? kpis : fallbackKpis).map((k: ReturnType<typeof getKpis>[number], idx: number) => (
             <KpiCard
               key={k.id}
               kpi={k}
