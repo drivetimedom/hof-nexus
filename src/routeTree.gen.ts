@@ -16,6 +16,8 @@ import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
+import { Route as ApiPublicMetaSyncRouteImport } from './routes/api/public/meta/sync'
+import { Route as ApiPublicMetaCallbackRouteImport } from './routes/api/public/meta/callback'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -51,6 +53,16 @@ const AuthenticatedCampaignsRoute = AuthenticatedCampaignsRouteImport.update({
   path: '/campaigns',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicMetaSyncRoute = ApiPublicMetaSyncRouteImport.update({
+  id: '/api/public/meta/sync',
+  path: '/api/public/meta/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMetaCallbackRoute = ApiPublicMetaCallbackRouteImport.update({
+  id: '/api/public/meta/callback',
+  path: '/api/public/meta/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +71,8 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
+  '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +81,8 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
+  '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +93,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
+  '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,8 +105,18 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/insights'
     | '/reports'
+    | '/api/public/meta/callback'
+    | '/api/public/meta/sync'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/campaigns' | '/dashboard' | '/insights' | '/reports'
+  to:
+    | '/'
+    | '/auth'
+    | '/campaigns'
+    | '/dashboard'
+    | '/insights'
+    | '/reports'
+    | '/api/public/meta/callback'
+    | '/api/public/meta/sync'
   id:
     | '__root__'
     | '/'
@@ -98,12 +126,16 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/insights'
     | '/_authenticated/reports'
+    | '/api/public/meta/callback'
+    | '/api/public/meta/sync'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicMetaCallbackRoute: typeof ApiPublicMetaCallbackRoute
+  ApiPublicMetaSyncRoute: typeof ApiPublicMetaSyncRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -157,6 +189,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/meta/sync': {
+      id: '/api/public/meta/sync'
+      path: '/api/public/meta/sync'
+      fullPath: '/api/public/meta/sync'
+      preLoaderRoute: typeof ApiPublicMetaSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/meta/callback': {
+      id: '/api/public/meta/callback'
+      path: '/api/public/meta/callback'
+      fullPath: '/api/public/meta/callback'
+      preLoaderRoute: typeof ApiPublicMetaCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -181,6 +227,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicMetaCallbackRoute: ApiPublicMetaCallbackRoute,
+  ApiPublicMetaSyncRoute: ApiPublicMetaSyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
