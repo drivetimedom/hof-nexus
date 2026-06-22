@@ -39,17 +39,25 @@ function OnboardingPage() {
     queryKey: ["onboarding-status"],
     queryFn: () => getStatus(),
     refetchOnWindowFocus: true,
+    refetchOnMount: "always",
+    staleTime: 0,
   });
 
   useEffect(() => {
     if (search.meta_connected) {
-      toast.success("Meta conectada com sucesso.");
+      toast.success("Meta conectada. Agora escolha sua conta de anúncios.");
       qc.invalidateQueries({ queryKey: ["onboarding-status"] });
+      status.refetch();
+      // Limpa o parâmetro da URL para não disparar novamente
+      navigate({ to: "/onboarding", search: {}, replace: true });
     }
     if (search.meta_error) {
       toast.error(`Erro ao conectar Meta: ${search.meta_error}`);
+      navigate({ to: "/onboarding", search: {}, replace: true });
     }
-  }, [search.meta_connected, search.meta_error, qc]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.meta_connected, search.meta_error]);
+
 
   const connectMutation = useMutation({
     mutationFn: async () => startOAuth(),

@@ -66,9 +66,6 @@ export const Route = createFileRoute("/api/public/meta/callback")({
             ? new Date(Date.now() + long.expires_in * 1000).toISOString()
             : null;
 
-          // If only one account, auto-select.
-          const auto = safe.length === 1 ? safe[0] : null;
-
           const { error: upErr } = await supabaseAdmin.from("meta_connections").upsert(
             {
               user_id: stateRow.user_id,
@@ -76,14 +73,16 @@ export const Route = createFileRoute("/api/public/meta/callback")({
               access_token: accessToken,
               token_expires_at: expiresAt,
               available_accounts: safe,
-              ad_account_id: auto?.id ?? null,
-              account_name: auto?.name ?? null,
+              // Sempre deixamos o usuário escolher manualmente, mesmo quando há 1 conta.
+              ad_account_id: null,
+              account_name: null,
             },
             { onConflict: "user_id" }
           );
           if (upErr) return back(`meta_error=${encodeURIComponent(upErr.message)}`);
 
           return back("meta_connected=1");
+
         } catch (e) {
           const msg = e instanceof Error ? e.message : "unknown";
           console.error("[meta/callback]", msg);
