@@ -45,14 +45,14 @@ const SECTIONS = [
     title: "Informações Coletadas",
     content: (
       <>
-        <p>Podemos coletar:</p>
-        <ul>
-          <li>Nome</li>
-          <li>E-mail</li>
-          <li>Informações de autenticação</li>
-          <li>Dados de uso da plataforma</li>
-          <li>Dados autorizados por integrações com terceiros</li>
-          <li>Informações relacionadas a contas de anúncios conectadas</li>
+        <p className="text-muted-foreground">Podemos coletar:</p>
+        <ul className="list-disc space-y-1.5 pl-5 marker:text-primary">
+          <li className="text-muted-foreground">Nome</li>
+          <li className="text-muted-foreground">E-mail</li>
+          <li className="text-muted-foreground">Informações de autenticação</li>
+          <li className="text-muted-foreground">Dados de uso da plataforma</li>
+          <li className="text-muted-foreground">Dados autorizados por integrações com terceiros</li>
+          <li className="text-muted-foreground">Informações relacionadas a contas de anúncios conectadas</li>
         </ul>
       </>
     ),
@@ -63,17 +63,17 @@ const SECTIONS = [
     title: "Integração com Meta Ads",
     content: (
       <>
-        <p>
+        <p className="text-muted-foreground">
           Quando o usuário opta por conectar sua conta Meta Ads, a plataforma poderá acessar informações autorizadas através da Meta Marketing API.
         </p>
-        <p>Os dados acessados são utilizados exclusivamente para:</p>
-        <ul>
-          <li>Exibição de métricas</li>
-          <li>Geração de relatórios</li>
-          <li>Análises estratégicas</li>
-          <li>Insights automatizados</li>
+        <p className="text-muted-foreground">Os dados acessados são utilizados exclusivamente para:</p>
+        <ul className="list-disc space-y-1.5 pl-5 marker:text-primary">
+          <li className="text-muted-foreground">Exibição de métricas</li>
+          <li className="text-muted-foreground">Geração de relatórios</li>
+          <li className="text-muted-foreground">Análises estratégicas</li>
+          <li className="text-muted-foreground">Insights automatizados</li>
         </ul>
-        <p>
+        <p className="text-muted-foreground">
           A plataforma não publica, altera ou gerencia campanhas sem autorização explícita do usuário.
         </p>
       </>
@@ -85,14 +85,14 @@ const SECTIONS = [
     title: "Uso das Informações",
     content: (
       <>
-        <p>As informações coletadas podem ser utilizadas para:</p>
-        <ul>
-          <li>Operação da plataforma</li>
-          <li>Autenticação de usuários</li>
-          <li>Geração de relatórios</li>
-          <li>Melhoria da experiência</li>
-          <li>Desenvolvimento de novos recursos</li>
-          <li>Suporte técnico</li>
+        <p className="text-muted-foreground">As informações coletadas podem ser utilizadas para:</p>
+        <ul className="list-disc space-y-1.5 pl-5 marker:text-primary">
+          <li className="text-muted-foreground">Operação da plataforma</li>
+          <li className="text-muted-foreground">Autenticação de usuários</li>
+          <li className="text-muted-foreground">Geração de relatórios</li>
+          <li className="text-muted-foreground">Melhoria da experiência</li>
+          <li className="text-muted-foreground">Desenvolvimento de novos recursos</li>
+          <li className="text-muted-foreground">Suporte técnico</li>
         </ul>
       </>
     ),
@@ -103,12 +103,12 @@ const SECTIONS = [
     title: "Compartilhamento de Dados",
     content: (
       <>
-        <p>Não comercializamos informações pessoais.</p>
-        <p>Os dados poderão ser compartilhados apenas quando necessário para:</p>
-        <ul>
-          <li>Prestação dos serviços</li>
-          <li>Cumprimento de obrigações legais</li>
-          <li>Funcionamento de integrações autorizadas pelo usuário</li>
+        <p className="text-muted-foreground">Não comercializamos informações pessoais.</p>
+        <p className="text-muted-foreground">Os dados poderão ser compartilhados apenas quando necessário para:</p>
+        <ul className="list-disc space-y-1.5 pl-5 marker:text-primary">
+          <li className="text-muted-foreground">Prestação dos serviços</li>
+          <li className="text-muted-foreground">Cumprimento de obrigações legais</li>
+          <li className="text-muted-foreground">Funcionamento de integrações autorizadas pelo usuário</li>
         </ul>
       </>
     ),
@@ -119,7 +119,7 @@ const SECTIONS = [
     title: "Armazenamento e Segurança",
     content: (
       <>
-        <p>
+        <p className="text-muted-foreground">
           Adotamos medidas técnicas e organizacionais adequadas para proteger os dados contra acesso não autorizado, perda, alteração ou divulgação indevida.
         </p>
       </>
@@ -131,13 +131,13 @@ const SECTIONS = [
     title: "Direitos do Usuário",
     content: (
       <>
-        <p>O usuário poderá solicitar:</p>
-        <ul>
-          <li>Acesso aos seus dados</li>
-          <li>Correção de informações</li>
-          <li>Exclusão de dados</li>
-          <li>Revogação de consentimentos</li>
-          <li>Encerramento da conta</li>
+        <p className="text-muted-foreground">O usuário poderá solicitar:</p>
+        <ul className="list-disc space-y-1.5 pl-5 marker:text-primary">
+          <li className="text-muted-foreground">Acesso aos seus dados</li>
+          <li className="text-muted-foreground">Correção de informações</li>
+          <li className="text-muted-foreground">Exclusão de dados</li>
+          <li className="text-muted-foreground">Revogação de consentimentos</li>
+          <li className="text-muted-foreground">Encerramento da conta</li>
         </ul>
       </>
     ),
@@ -148,7 +148,7 @@ const SECTIONS = [
     title: "Cookies e Tecnologias Semelhantes",
     content: (
       <>
-        <p>
+        <p className="text-muted-foreground">
           A plataforma pode utilizar cookies e tecnologias semelhantes para melhorar a navegação, autenticação e análise de uso.
         </p>
       </>
@@ -160,8 +160,8 @@ const SECTIONS = [
     title: "Alterações desta Política",
     content: (
       <>
-        <p>Esta Política poderá ser atualizada periodicamente.</p>
-        <p>Alterações relevantes serão comunicadas através da plataforma.</p>
+        <p className="text-muted-foreground">Esta Política poderá ser atualizada periodicamente.</p>
+        <p className="text-muted-foreground">Alterações relevantes serão comunicadas através da plataforma.</p>
       </>
     ),
   },
@@ -171,7 +171,7 @@ const SECTIONS = [
     title: "Contato",
     content: (
       <>
-        <p>
+        <p className="text-muted-foreground">
           Para dúvidas relacionadas à privacidade ou proteção de dados, entre em contato através do e-mail:
         </p>
         <p>
