@@ -7,10 +7,10 @@ import { KpiCard } from "@/components/kpi-card";
 import { PerformanceChart } from "@/components/performance-chart";
 import { CampaignsTable } from "@/components/campaigns-table";
 import { InsightsGrid } from "@/components/insights-grid";
-import { getKpis, getSeries, type Period } from "@/lib/mock-data";
+import { type Period } from "@/lib/mock-data";
 import { getOnboardingStatus, getMyMetrics } from "@/lib/meta.functions";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Plug, Loader2 } from "lucide-react";
+import { Plug, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
