@@ -8,11 +8,28 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { getSeries, PERIODS, type Period } from "@/lib/mock-data";
+import { PERIODS, type Period } from "@/lib/mock-data";
 
-export function PerformanceChart({ period }: { period: Period }) {
+type Row = {
+  date: string;
+  spend: number | string;
+  revenue: number | string;
+  leads: number;
+};
+
+export function PerformanceChart({ period, rows }: { period: Period; rows: Row[] }) {
   const [metric, setMetric] = useState<"revenue" | "invest" | "leads">("revenue");
-  const data = useMemo(() => getSeries(period), [period]);
+
+  const data = useMemo(
+    () =>
+      rows.map((r) => ({
+        date: new Date(r.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+        revenue: Number(r.revenue) || 0,
+        invest: Number(r.spend) || 0,
+        leads: Number(r.leads) || 0,
+      })),
+    [rows]
+  );
 
   const config = {
     revenue: { label: "Faturamento", color: "var(--primary)" },
@@ -49,59 +66,65 @@ export function PerformanceChart({ period }: { period: Period }) {
       </div>
 
       <div className="mt-6 h-[280px] w-full sm:h-[340px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
-            <defs>
-              <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={config.color} stopOpacity={0.35} />
-                <stop offset="100%" stopColor={config.color} stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
-            <XAxis
-              dataKey="date"
-              stroke="rgba(255,255,255,0.4)"
-              fontSize={11}
-              tickLine={false}
-              axisLine={false}
-              minTickGap={20}
-            />
-            <YAxis
-              stroke="rgba(255,255,255,0.4)"
-              fontSize={11}
-              tickLine={false}
-              axisLine={false}
-              width={56}
-              tickFormatter={(v: number) =>
-                metric === "leads" ? v.toString() : v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
-              }
-            />
-            <Tooltip
-              cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 1 }}
-              contentStyle={{
-                background: "oklch(0.18 0.005 280 / 0.9)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: 12,
-                backdropFilter: "blur(12px)",
-                fontSize: 12,
-              }}
-              labelStyle={{ color: "rgba(255,255,255,0.6)", fontSize: 11 }}
-              formatter={(v: number) => [
-                metric === "leads"
-                  ? v.toLocaleString("pt-BR")
-                  : `R$ ${v.toLocaleString("pt-BR")}`,
-                config.label,
-              ]}
-            />
-            <Area
-              type="monotone"
-              dataKey={metric}
-              stroke={config.color}
-              strokeWidth={2}
-              fill="url(#chart-fill)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        {data.length === 0 ? (
+          <div className="grid h-full place-items-center text-sm text-muted-foreground">
+            Sem dados sincronizados para o período.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
+              <defs>
+                <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={config.color} stopOpacity={0.35} />
+                  <stop offset="100%" stopColor={config.color} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
+              <XAxis
+                dataKey="date"
+                stroke="rgba(255,255,255,0.4)"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                minTickGap={20}
+              />
+              <YAxis
+                stroke="rgba(255,255,255,0.4)"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                width={56}
+                tickFormatter={(v: number) =>
+                  metric === "leads" ? v.toString() : v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`
+                }
+              />
+              <Tooltip
+                cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 1 }}
+                contentStyle={{
+                  background: "oklch(0.18 0.005 280 / 0.9)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 12,
+                  backdropFilter: "blur(12px)",
+                  fontSize: 12,
+                }}
+                labelStyle={{ color: "rgba(255,255,255,0.6)", fontSize: 11 }}
+                formatter={(v: number) => [
+                  metric === "leads"
+                    ? v.toLocaleString("pt-BR")
+                    : `R$ ${v.toLocaleString("pt-BR")}`,
+                  config.label,
+                ]}
+              />
+              <Area
+                type="monotone"
+                dataKey={metric}
+                stroke={config.color}
+                strokeWidth={2}
+                fill="url(#chart-fill)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );
