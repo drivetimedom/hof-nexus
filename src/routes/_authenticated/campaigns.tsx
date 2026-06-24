@@ -17,7 +17,7 @@ function CampaignsPage() {
       period={period}
       onPeriodChange={setPeriod}
     >
-      <CampaignsTable />
+      <CampaignsTable days={period === "7d" ? 7 : period === "30d" ? 30 : period === "today" ? 1 : 90} />
     </AppShell>
   );
 }
