@@ -181,3 +181,117 @@ export function normalizeInsight(row: DailyInsight, userId: string, adAccountId:
     roas,
   };
 }
+
+export type CampaignInsight = {
+  campaign_id: string;
+  campaign_name: string;
+  spend?: string;
+  impressions?: string;
+  reach?: string;
+  clicks?: string;
+  ctr?: string;
+  cpc?: string;
+  actions?: { action_type: string; value: string }[];
+  action_values?: { action_type: string; value: string }[];
+};
+
+export async function fetchCampaignInsights(args: {
+  accessToken: string;
+  adAccountId: string;
+  since: string;
+  until: string;
+}): Promise<CampaignInsight[]> {
+  const fields = [
+    "campaign_id",
+    "campaign_name",
+    "spend",
+    "impressions",
+    "reach",
+    "clicks",
+    "ctr",
+    "cpc",
+    "actions",
+    "action_values",
+  ].join(",");
+  const params = new URLSearchParams({
+    level: "campaign",
+    time_range: JSON.stringify({ since: args.since, until: args.until }),
+    fields,
+    limit: "500",
+    access_token: args.accessToken,
+  });
+  const url = `${GRAPH}/${args.adAccountId}/insights?${params.toString()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Falha ao buscar campanhas: ${await res.text()}`);
+  const json = (await res.json()) as { data: CampaignInsight[] };
+  return json.data ?? [];
+}
+
+export type CampaignStatusInfo = { id: string; name: string; effective_status: string };
+
+export async function fetchCampaignStatuses(args: {
+  accessToken: string;
+  adAccountId: string;
+}): Promise<CampaignStatusInfo[]> {
+  const params = new URLSearchParams({
+    fields: "id,name,effective_status",
+    limit: "500",
+    access_token: args.accessToken,
+  });
+  const url = `${GRAPH}/${args.adAccountId}/campaigns?${params.toString()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Falha ao listar campanhas: ${await res.text()}`);
+  const json = (await res.json()) as { data: CampaignStatusInfo[] };
+  return json.data ?? [];
+}
+
+export function normalizeCampaign(
+  row: CampaignInsight,
+  effectiveStatus?: string
+) {
+  const spend = Number(row.spend) || 0;
+  const impressions = Number(row.impressions) || 0;
+  const reach = Number(row.reach) || 0;
+  const clicks = Number(row.clicks) || 0;
+  const ctr = Number(row.ctr) || 0;
+  const cpc = Number(row.cpc) || 0;
+  const leads = sumAction(row.actions, [
+    "lead",
+    "onsite_conversion.lead_grouped",
+    "offsite_conversion.fb_pixel_lead",
+  ]);
+  const purchases = sumAction(row.actions, [
+    "purchase",
+    "offsite_conversion.fb_pixel_purchase",
+    "omni_purchase",
+  ]);
+  const revenue = sumAction(row.action_values, [
+    "purchase",
+    "offsite_conversion.fb_pixel_purchase",
+    "omni_purchase",
+  ]);
+  const roas = spend > 0 ? revenue / spend : 0;
+  const cpl = leads > 0 ? spend / leads : 0;
+  const isPaused = effectiveStatus && effectiveStatus !== "ACTIVE";
+  let status: "excelente" | "atencao" | "critico" | "pausada";
+  if (isPaused) status = "pausada";
+  else if (roas >= 8) status = "excelente";
+  else if (roas >= 4) status = "atencao";
+  else status = "critico";
+  return {
+    id: row.campaign_id,
+    name: row.campaign_name,
+    status,
+    spend,
+    impressions,
+    reach,
+    clicks,
+    ctr,
+    cpc,
+    leads,
+    purchases,
+    revenue,
+    cpl,
+    roas,
+  };
+}
