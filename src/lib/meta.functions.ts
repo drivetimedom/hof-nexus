@@ -207,3 +207,55 @@ export const getMyMetrics = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return { rows: rows ?? [] };
   });
+
+export const getMyCampaigns = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { days?: number } | undefined) => ({ days: data?.days ?? 30 }))
+  .handler(async ({ context, data }) => {
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { fetchCampaignInsights, fetchCampaignStatuses, normalizeCampaign } =
+      await import("@/lib/meta.server");
+    const { data: conn, error } = await supabaseAdmin
+      .from("meta_connections")
+      .select("access_token,ad_account_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!conn?.ad_account_id) return { campaigns: [] };
+    const until = new Date();
+    const since = new Date();
+    since.setDate(since.getDate() - data.days);
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
+    const [insights, statuses] = await Promise.all([
+      fetchCampaignInsights({
+        accessToken: conn.access_token,
+        adAccountId: conn.ad_account_id,
+        since: fmt(since),
+        until: fmt(until),
+      }),
+      fetchCampaignStatuses({
+        accessToken: conn.access_token,
+        adAccountId: conn.ad_account_id,
+      }).catch(() => []),
+    ]);
+    const statusMap = new Map(statuses.map((s) => [s.id, s.effective_status]));
+    const seen = new Set<string>();
+    const campaigns = insights.map((row) => {
+      seen.add(row.campaign_id);
+      return normalizeCampaign(row, statusMap.get(row.campaign_id));
+    });
+    // Include campaigns that have status but no insights in the period (paused/no spend).
+    for (const s of statuses) {
+      if (!seen.has(s.id)) {
+        campaigns.push(
+          normalizeCampaign(
+            { campaign_id: s.id, campaign_name: s.name },
+            s.effective_status
+          )
+        );
+      }
+    }
+    campaigns.sort((a, b) => b.spend - a.spend);
+    return { campaigns };
+  });
