@@ -79,9 +79,7 @@ function DashboardPage() {
   const rows = metrics.data?.rows ?? [];
   const hasData = rows.length > 0;
   const kpis = computeKpis(rows);
-  const fallbackKpis = getKpis(period);
-  const fallbackSeries = getSeries(period);
-  const sparkSource = (hasData ? rows.map((r) => Number(r.revenue) || 0) : fallbackSeries.map((s) => s.revenue));
+  const sparkSource = rows.map((r) => Number(r.revenue) || 0);
 
   return (
     <AppShell
@@ -101,48 +99,35 @@ function DashboardPage() {
             </h2>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-          {(hasData ? kpis : fallbackKpis).map((k: ReturnType<typeof getKpis>[number], idx: number) => (
-            <KpiCard
-              key={k.id}
-              kpi={k}
-              sparkline={sparkSource.slice(-12).map((v, i) =>
-                k.id === "cpl" ? v * 0.001 + i * 0.5 : v * (0.6 + Math.sin(i + idx) * 0.2))}
-            />
-          ))}
-        </div>
-        {!hasData && (
-          <p className="mt-3 text-xs text-muted-foreground">
-            Ainda não há métricas sincronizadas. Os números abaixo são exemplos enquanto sua primeira
-            sincronização não termina.
-          </p>
+        {metrics.isLoading ? (
+          <div className="grid h-32 place-items-center">
+            <Loader2 className="size-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : hasData ? (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+            {kpis.map((k, idx: number) => (
+              <KpiCard
+                key={k.id}
+                kpi={k}
+                sparkline={sparkSource.slice(-12).map((v, i) =>
+                  k.id === "cpl" ? v * 0.001 + i * 0.5 : v * (0.6 + Math.sin(i + idx) * 0.2))}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="surface-panel p-8 text-sm text-muted-foreground">
+            Ainda não há métricas sincronizadas para o período. Use “Sincronizar agora” em
+            Configurações → Meta Ads para coletar os dados da conta conectada.
+          </div>
         )}
       </section>
 
       <section className="mt-10">
-        <PerformanceChart period={period} />
+        <PerformanceChart period={period} rows={rows} />
       </section>
 
-      <section className="mt-10 grid grid-cols-1 gap-6 xl:grid-cols-[1.6fr_1fr]">
-        <CampaignsTable limit={5} />
-        <div className="surface-panel p-5 sm:p-7">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                Insights Estratégicos
-              </div>
-              <h3 className="mt-1 font-display text-lg font-semibold tracking-tight">
-                Decisões recomendadas
-              </h3>
-            </div>
-            <Link to="/insights" className="inline-flex items-center gap-1 text-xs text-muted-foreground transition hover:text-primary">
-              Ver todos <ArrowRight className="size-3" />
-            </Link>
-          </div>
-          <div className="mt-5">
-            <InsightsGridSimple />
-          </div>
-        </div>
+      <section className="mt-10">
+        <CampaignsTable limit={5} days={period === "7d" ? 7 : period === "30d" ? 30 : 90} />
       </section>
 
       <section className="mt-10">
