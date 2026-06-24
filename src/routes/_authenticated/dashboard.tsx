@@ -105,7 +105,7 @@ function DashboardPage() {
           </div>
         ) : hasData ? (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-            {kpis.map((k, idx: number) => (
+            {kpis.map((k: { id: string }, idx: number) => (
               <KpiCard
                 key={k.id}
                 kpi={k}
