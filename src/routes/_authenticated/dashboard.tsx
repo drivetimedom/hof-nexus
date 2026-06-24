@@ -31,11 +31,13 @@ function DashboardPage() {
     }
   }, [status.data, navigate]);
 
-  const metaConnected = !!status.data?.meta?.connected;
+  const meta = status.data?.meta;
+  const metaConnected = !!meta?.connected;
+  const adAccountId = meta && "adAccountId" in meta ? meta.adAccountId ?? null : null;
   const metrics = useQuery({
     queryKey: ["metrics", period],
     queryFn: () => getMetrics({ data: { days: period === "7d" ? 7 : period === "30d" ? 30 : 90 } }),
-    enabled: metaConnected,
+    enabled: metaConnected && !!adAccountId,
   });
 
   if (status.isLoading) {
@@ -51,7 +53,25 @@ function DashboardPage() {
   if (!metaConnected) {
     return (
       <AppShell title="Centro de decisão" subtitle="Conecte sua conta Meta para liberar insights">
-        <EmptyState />
+        <EmptyState
+          title="Conecte sua conta Meta Ads"
+          description="Para visualizar seus indicadores e insights estratégicos, conecte sua conta de anúncios. Levamos menos de 1 minuto para sincronizar os últimos 30 dias."
+          cta="Conectar Meta Ads"
+          to="/onboarding"
+        />
+      </AppShell>
+    );
+  }
+
+  if (!adAccountId) {
+    return (
+      <AppShell title="Centro de decisão" subtitle="Selecione sua conta de anúncios para começar">
+        <EmptyState
+          title="Selecione sua conta de anúncios"
+          description="Sua conexão Meta está ativa, mas nenhuma conta de anúncios foi escolhida ainda. Selecione uma para liberar seus indicadores."
+          cta="Selecionar conta"
+          to="/onboarding"
+        />
       </AppShell>
     );
   }
@@ -142,22 +162,27 @@ function DashboardPage() {
   );
 }
 
-function EmptyState() {
+function EmptyState({
+  title,
+  description,
+  cta,
+  to,
+}: {
+  title: string;
+  description: string;
+  cta: string;
+  to: "/onboarding";
+}) {
   return (
     <div className="mx-auto mt-12 grid max-w-2xl place-items-center text-center">
       <div className="surface-panel w-full p-10">
         <div className="mx-auto grid size-14 place-items-center rounded-xl bg-[var(--gradient-accent)]">
           <Plug className="size-6 text-primary-foreground" />
         </div>
-        <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight">
-          Conecte sua conta Meta Ads
-        </h2>
-        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          Para visualizar seus indicadores e insights estratégicos, conecte sua conta de anúncios.
-          Levamos menos de 1 minuto para sincronizar os últimos 30 dias.
-        </p>
-        <Link to="/onboarding" className="mt-6 inline-block">
-          <Button className="h-11 px-6">Conectar Meta Ads</Button>
+        <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight">{title}</h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{description}</p>
+        <Link to={to} className="mt-6 inline-block">
+          <Button className="h-11 px-6">{cta}</Button>
         </Link>
       </div>
     </div>
