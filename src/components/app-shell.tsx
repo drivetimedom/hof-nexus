@@ -12,6 +12,7 @@ import {
   ChevronDown,
   Menu,
   X,
+  Users as UsersIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PERIODS, type Period } from "@/lib/mock-data";
@@ -25,12 +26,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 
-const NAV = [
+const BASE_NAV = [
   { to: "/dashboard", label: "Visão Geral", icon: LayoutDashboard },
   { to: "/campaigns", label: "Campanhas", icon: BarChart3 },
   { to: "/insights", label: "Insights", icon: Sparkles },
   { to: "/reports", label: "Relatórios", icon: FileText },
   { to: "/settings/integrations", label: "Integrações", icon: Settings },
+] as const;
+
+const ADMIN_NAV = [
+  { to: "/settings/users", label: "Usuários", icon: UsersIcon },
 ] as const;
 
 export function AppShell({
@@ -48,12 +53,26 @@ export function AppShell({
 }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
+    supabase.auth.getUser().then(async ({ data }) => {
+      setEmail(data.user?.email ?? "");
+      if (data.user) {
+        const { data: role } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id)
+          .eq("role", "admin")
+          .maybeSingle();
+        setIsAdmin(!!role);
+      }
+    });
   }, []);
+
+  const NAV = isAdmin ? [...BASE_NAV, ...ADMIN_NAV] : BASE_NAV;
 
   async function signOut() {
     await supabase.auth.signOut();

@@ -25,8 +25,11 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard" });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (data.session) {
+        const dest = await resolveRoleDestination(data.session.user.id);
+        navigate({ to: dest });
+      }
     });
   }, [navigate]);
 
@@ -35,19 +38,33 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data: signed, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        // Check active state
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_active")
+          .eq("id", signed.user.id)
+          .maybeSingle();
+        if (profile && profile.is_active === false) {
+          await supabase.auth.signOut();
+          throw new Error("Sua conta está desativada. Entre em contato com um administrador.");
+        }
         toast.success("Bem-vindo de volta.");
+        const dest = await resolveRoleDestination(signed.user.id);
+        navigate({ to: dest });
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data: signed, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
         toast.success("Conta criada com sucesso.");
+        const uid = signed.user?.id;
+        const dest = uid ? await resolveRoleDestination(uid) : "/dashboard";
+        navigate({ to: dest });
       }
-      navigate({ to: "/dashboard" });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Não foi possível processar a solicitação.";
       toast.error(msg);
@@ -212,6 +229,16 @@ function FeatureRow({ icon: Icon, title, desc }: { icon: typeof TrendingUp; titl
       </div>
     </div>
   );
+}
+
+async function resolveRoleDestination(userId: string): Promise<"/admin" | "/dashboard"> {
+  const { data } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  return data ? "/admin" : "/dashboard";
 }
 
 export function BrandMark({ className = "" }: { className?: string }) {

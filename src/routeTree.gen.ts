@@ -19,6 +19,8 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedSettingsUsersRouteImport } from './routes/_authenticated/settings.users'
 import { Route as AuthenticatedSettingsIntegrationsRouteImport } from './routes/_authenticated/settings.integrations'
 import { Route as ApiPublicMetaSyncRouteImport } from './routes/api/public/meta/sync'
 import { Route as ApiPublicMetaCallbackRouteImport } from './routes/api/public/meta/callback'
@@ -72,6 +74,17 @@ const AuthenticatedCampaignsRoute = AuthenticatedCampaignsRouteImport.update({
   path: '/campaigns',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsUsersRoute =
+  AuthenticatedSettingsUsersRouteImport.update({
+    id: '/settings/users',
+    path: '/settings/users',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsIntegrationsRoute =
   AuthenticatedSettingsIntegrationsRouteImport.update({
     id: '/settings/integrations',
@@ -94,12 +107,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/campaigns': typeof AuthenticatedCampaignsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
+  '/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
   '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
 }
@@ -108,12 +123,14 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/campaigns': typeof AuthenticatedCampaignsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
+  '/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
   '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
 }
@@ -124,12 +141,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/campaigns': typeof AuthenticatedCampaignsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
+  '/_authenticated/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
   '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
 }
@@ -140,12 +159,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacy-policy'
     | '/terms-of-service'
+    | '/admin'
     | '/campaigns'
     | '/dashboard'
     | '/insights'
     | '/onboarding'
     | '/reports'
     | '/settings/integrations'
+    | '/settings/users'
     | '/api/public/meta/callback'
     | '/api/public/meta/sync'
   fileRoutesByTo: FileRoutesByTo
@@ -154,12 +175,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacy-policy'
     | '/terms-of-service'
+    | '/admin'
     | '/campaigns'
     | '/dashboard'
     | '/insights'
     | '/onboarding'
     | '/reports'
     | '/settings/integrations'
+    | '/settings/users'
     | '/api/public/meta/callback'
     | '/api/public/meta/sync'
   id:
@@ -169,12 +192,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/privacy-policy'
     | '/terms-of-service'
+    | '/_authenticated/admin'
     | '/_authenticated/campaigns'
     | '/_authenticated/dashboard'
     | '/_authenticated/insights'
     | '/_authenticated/onboarding'
     | '/_authenticated/reports'
     | '/_authenticated/settings/integrations'
+    | '/_authenticated/settings/users'
     | '/api/public/meta/callback'
     | '/api/public/meta/sync'
   fileRoutesById: FileRoutesById
@@ -261,6 +286,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/users': {
+      id: '/_authenticated/settings/users'
+      path: '/settings/users'
+      fullPath: '/settings/users'
+      preLoaderRoute: typeof AuthenticatedSettingsUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/integrations': {
       id: '/_authenticated/settings/integrations'
       path: '/settings/integrations'
@@ -286,15 +325,18 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSettingsIntegrationsRoute: typeof AuthenticatedSettingsIntegrationsRoute
+  AuthenticatedSettingsUsersRoute: typeof AuthenticatedSettingsUsersRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCampaignsRoute: AuthenticatedCampaignsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
@@ -302,6 +344,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSettingsIntegrationsRoute:
     AuthenticatedSettingsIntegrationsRoute,
+  AuthenticatedSettingsUsersRoute: AuthenticatedSettingsUsersRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

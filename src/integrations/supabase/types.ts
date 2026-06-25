@@ -140,6 +140,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          is_active: boolean
           onboarding_completed: boolean
           updated_at: string
         }
@@ -148,6 +149,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          is_active?: boolean
           onboarding_completed?: boolean
           updated_at?: string
         }
@@ -156,6 +158,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          is_active?: boolean
           onboarding_completed?: boolean
           updated_at?: string
         }
@@ -187,6 +190,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_global_stats: {
+        Args: never
+        Returns: {
+          total_active: number
+          total_admins: number
+          total_conversions: number
+          total_inactive: number
+          total_mentors: number
+          total_meta_connections: number
+          total_revenue: number
+          total_spend: number
+        }[]
+      }
+      admin_user_summary: {
+        Args: never
+        Returns: {
+          ad_account_id: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          last_synced_at: string
+          meta_connected: boolean
+          onboarding_completed: boolean
+          roles: Database["public"]["Enums"]["app_role"][]
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -196,7 +227,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "mentor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -324,7 +355,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "mentor"],
     },
   },
 } as const
