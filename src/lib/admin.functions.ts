@@ -96,6 +96,43 @@ export const adminSetActive = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const adminCreateUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (d: {
+      email: string;
+      password: string;
+      full_name?: string | null;
+      role: "admin" | "mentor";
+    }) => d,
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: { full_name: data.full_name ?? null },
+    });
+    if (error) throw new Error(error.message);
+    const newId = created.user?.id;
+    if (!newId) throw new Error("Falha ao criar usuário.");
+    // handle_new_user trigger creates profile + default 'mentor' role
+    if (data.role === "admin") {
+      await supabaseAdmin
+        .from("user_roles")
+        .delete()
+        .eq("user_id", newId)
+        .in("role", ["admin", "mentor"]);
+      const { error: rErr } = await supabaseAdmin
+        .from("user_roles")
+        .insert({ user_id: newId, role: "admin" });
+      if (rErr) throw new Error(rErr.message);
+    }
+    return { ok: true, id: newId };
+  });
+
 export const adminSetRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { targetUserId: string; role: "admin" | "mentor" }) => d)
