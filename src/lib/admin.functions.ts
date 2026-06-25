@@ -53,7 +53,7 @@ export const adminGlobalStats = createServerFn({ method: "GET" })
 
 export const adminUpdateProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: { targetUserId: string; full_name?: string | null; email?: string | null }) => d)
+  .inputValidator((d: { targetUserId: string; full_name?: string | null; email?: string | null }) => d)
   .handler(async ({ context, data }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -72,7 +72,7 @@ export const adminUpdateProfile = createServerFn({ method: "POST" })
 
 export const adminSetActive = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: { targetUserId: string; is_active: boolean }) => d)
+  .inputValidator((d: { targetUserId: string; is_active: boolean }) => d)
   .handler(async ({ context, data }) => {
     await assertAdmin(context.userId);
     if (data.targetUserId === context.userId)
@@ -98,7 +98,7 @@ export const adminSetActive = createServerFn({ method: "POST" })
 
 export const adminSetRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((d: { targetUserId: string; role: "admin" | "mentor" }) => d)
+  .inputValidator((d: { targetUserId: string; role: "admin" | "mentor" }) => d)
   .handler(async ({ context, data }) => {
     await assertAdmin(context.userId);
     if (data.targetUserId === context.userId && data.role !== "admin")
