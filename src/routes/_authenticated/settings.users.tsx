@@ -38,6 +38,7 @@ import {
   ShieldOff,
   ShieldCheck,
   Pencil,
+  UserPlus,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings/users")({
