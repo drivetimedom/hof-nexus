@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import {
+  adminCreateUser,
   adminGlobalStats,
   adminListUsers,
   adminSetActive,
