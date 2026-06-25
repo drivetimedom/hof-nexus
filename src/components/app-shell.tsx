@@ -12,6 +12,7 @@ import {
   ChevronDown,
   Menu,
   X,
+  Users as UsersIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PERIODS, type Period } from "@/lib/mock-data";
@@ -25,12 +26,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 
-const NAV = [
+const BASE_NAV = [
   { to: "/dashboard", label: "Visão Geral", icon: LayoutDashboard },
   { to: "/campaigns", label: "Campanhas", icon: BarChart3 },
   { to: "/insights", label: "Insights", icon: Sparkles },
   { to: "/reports", label: "Relatórios", icon: FileText },
   { to: "/settings/integrations", label: "Integrações", icon: Settings },
+] as const;
+
+const ADMIN_NAV = [
+  { to: "/settings/users", label: "Usuários", icon: UsersIcon },
 ] as const;
 
 export function AppShell({
