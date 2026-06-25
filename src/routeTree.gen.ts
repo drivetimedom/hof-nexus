@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
+import { Route as AuthenticatedFunnelRouteImport } from './routes/_authenticated/funnel'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authenticated/campaigns'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -62,6 +63,11 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
 const AuthenticatedInsightsRoute = AuthenticatedInsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFunnelRoute = AuthenticatedFunnelRouteImport.update({
+  id: '/funnel',
+  path: '/funnel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/campaigns': typeof AuthenticatedCampaignsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/funnel': typeof AuthenticatedFunnelRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/reports': typeof AuthenticatedReportsRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/campaigns': typeof AuthenticatedCampaignsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/funnel': typeof AuthenticatedFunnelRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/reports': typeof AuthenticatedReportsRoute
@@ -144,6 +152,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/campaigns': typeof AuthenticatedCampaignsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/funnel': typeof AuthenticatedFunnelRoute
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/campaigns'
     | '/dashboard'
+    | '/funnel'
     | '/insights'
     | '/onboarding'
     | '/reports'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/campaigns'
     | '/dashboard'
+    | '/funnel'
     | '/insights'
     | '/onboarding'
     | '/reports'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/campaigns'
     | '/_authenticated/dashboard'
+    | '/_authenticated/funnel'
     | '/_authenticated/insights'
     | '/_authenticated/onboarding'
     | '/_authenticated/reports'
@@ -272,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInsightsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/funnel': {
+      id: '/_authenticated/funnel'
+      path: '/funnel'
+      fullPath: '/funnel'
+      preLoaderRoute: typeof AuthenticatedFunnelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -328,6 +347,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedFunnelRoute: typeof AuthenticatedFunnelRoute
   AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
@@ -339,6 +359,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCampaignsRoute: AuthenticatedCampaignsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedFunnelRoute: AuthenticatedFunnelRoute,
   AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
