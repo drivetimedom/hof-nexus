@@ -71,6 +71,45 @@ export type Database = {
         }
         Relationships: []
       }
+      funnel_manual_entries: {
+        Row: {
+          conversations: number
+          created_at: string
+          date: string
+          id: string
+          notes: string | null
+          qualified_leads: number
+          sales_count: number
+          sales_revenue: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conversations?: number
+          created_at?: string
+          date: string
+          id?: string
+          notes?: string | null
+          qualified_leads?: number
+          sales_count?: number
+          sales_revenue?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conversations?: number
+          created_at?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          qualified_leads?: number
+          sales_count?: number
+          sales_revenue?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       meta_connections: {
         Row: {
           access_token: string

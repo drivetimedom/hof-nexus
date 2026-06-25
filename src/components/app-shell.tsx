@@ -7,6 +7,7 @@ import {
   BarChart3,
   Sparkles,
   FileText,
+  Filter,
   Settings,
   LogOut,
   ChevronDown,
@@ -29,6 +30,7 @@ import { toast } from "sonner";
 const BASE_NAV = [
   { to: "/dashboard", label: "Visão Geral", icon: LayoutDashboard },
   { to: "/campaigns", label: "Campanhas", icon: BarChart3 },
+  { to: "/funnel", label: "Funil", icon: Filter },
   { to: "/insights", label: "Insights", icon: Sparkles },
   { to: "/reports", label: "Relatórios", icon: FileText },
   { to: "/settings/integrations", label: "Integrações", icon: Settings },
