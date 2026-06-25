@@ -385,6 +385,16 @@ function AdminUsersPage() {
           qc.invalidateQueries({ queryKey: ["admin-users"] });
         }}
       />
+
+      <CreateUserDialog
+        open={creating}
+        onClose={() => setCreating(false)}
+        onCreated={() => {
+          setCreating(false);
+          qc.invalidateQueries({ queryKey: ["admin-users"] });
+          qc.invalidateQueries({ queryKey: ["admin-stats"] });
+        }}
+      />
     </AppShell>
   );
 }
