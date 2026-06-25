@@ -205,8 +205,19 @@ function AdminUsersPage() {
         />
       </div>
 
+      {/* Action bar */}
+      <div className="mt-8 flex items-center justify-between gap-3">
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">
+          Gestão de contas
+        </div>
+        <Button onClick={() => setCreating(true)} className="gap-2">
+          <UserPlus className="size-4" />
+          Novo usuário
+        </Button>
+      </div>
+
       {/* Filters */}
-      <div className="mt-8 surface-glass rounded-xl p-4">
+      <div className="mt-4 surface-glass rounded-xl p-4">
         <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
