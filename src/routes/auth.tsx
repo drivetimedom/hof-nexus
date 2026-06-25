@@ -231,6 +231,16 @@ function FeatureRow({ icon: Icon, title, desc }: { icon: typeof TrendingUp; titl
   );
 }
 
+async function resolveRoleDestination(userId: string): Promise<"/admin" | "/dashboard"> {
+  const { data } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  return data ? "/admin" : "/dashboard";
+}
+
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
     <div className={`relative grid size-9 place-items-center rounded-lg border border-border bg-card ${className}`}>
