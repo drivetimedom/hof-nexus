@@ -57,10 +57,14 @@ function AuthPage() {
         const { data: signed, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast.success("Conta criada com sucesso.");
+        // Garantir sessão ativa (auto-confirm habilitado nesta fase do projeto)
+        if (!signed.session) {
+          const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+          if (signInErr) throw signInErr;
+        }
+        toast.success("Conta criada! Acesso liberado.");
         const uid = signed.user?.id;
         const dest = uid ? await resolveRoleDestination(uid) : "/dashboard";
         navigate({ to: dest });
