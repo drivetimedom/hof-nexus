@@ -57,7 +57,7 @@ export const adminUpdateProfile = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = {};
+    const patch: { full_name?: string | null; email?: string | null } = {};
     if (data.full_name !== undefined) patch.full_name = data.full_name;
     if (data.email !== undefined) patch.email = data.email;
     if (Object.keys(patch).length) {
