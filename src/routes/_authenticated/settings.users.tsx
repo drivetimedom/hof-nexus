@@ -485,3 +485,115 @@ function EditUserDialog({
     </Dialog>
   );
 }
+
+function CreateUserDialog({
+  open,
+  onClose,
+  onCreated,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"admin" | "mentor">("mentor");
+  const [saving, setSaving] = useState(false);
+
+  function reset() {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setRole("mentor");
+  }
+
+  async function create() {
+    if (!email.trim() || password.length < 8) {
+      toast.error("Informe e-mail válido e senha com ao menos 8 caracteres.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await adminCreateUser({
+        data: { email: email.trim(), password, full_name: name.trim() || null, role },
+      });
+      toast.success("Usuário criado.");
+      reset();
+      onCreated();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao criar usuário.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) {
+          reset();
+          onClose();
+        }
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Adicionar usuário</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label>Nome completo</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Opcional" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>E-mail</Label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="nome@empresa.com"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Senha provisória</Label>
+            <Input
+              type="text"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Mínimo 8 caracteres"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Papel</Label>
+            <Select value={role} onValueChange={(v) => setRole(v as "admin" | "mentor")}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="mentor">Mentorado</SelectItem>
+                <SelectItem value="admin">Administrador</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => {
+              reset();
+              onClose();
+            }}
+            disabled={saving}
+          >
+            Cancelar
+          </Button>
+          <Button onClick={create} disabled={saving}>
+            {saving ? "Criando…" : "Criar usuário"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
