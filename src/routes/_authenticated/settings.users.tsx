@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import {
+  adminCreateUser,
   adminGlobalStats,
   adminListUsers,
   adminSetActive,
@@ -37,6 +38,7 @@ import {
   ShieldOff,
   ShieldCheck,
   Pencil,
+  UserPlus,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings/users")({
@@ -80,6 +82,7 @@ function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [editing, setEditing] = useState<UserRow | null>(null);
+  const [creating, setCreating] = useState(false);
 
   const setActive = useMutation({
     mutationFn: (vars: { targetUserId: string; is_active: boolean }) =>
@@ -202,8 +205,19 @@ function AdminUsersPage() {
         />
       </div>
 
+      {/* Action bar */}
+      <div className="mt-8 flex items-center justify-between gap-3">
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">
+          Gestão de contas
+        </div>
+        <Button onClick={() => setCreating(true)} className="gap-2">
+          <UserPlus className="size-4" />
+          Novo usuário
+        </Button>
+      </div>
+
       {/* Filters */}
-      <div className="mt-8 surface-glass rounded-xl p-4">
+      <div className="mt-4 surface-glass rounded-xl p-4">
         <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -371,6 +385,16 @@ function AdminUsersPage() {
           qc.invalidateQueries({ queryKey: ["admin-users"] });
         }}
       />
+
+      <CreateUserDialog
+        open={creating}
+        onClose={() => setCreating(false)}
+        onCreated={() => {
+          setCreating(false);
+          qc.invalidateQueries({ queryKey: ["admin-users"] });
+          qc.invalidateQueries({ queryKey: ["admin-stats"] });
+        }}
+      />
     </AppShell>
   );
 }
@@ -455,6 +479,118 @@ function EditUserDialog({
           </Button>
           <Button onClick={save} disabled={saving}>
             {saving ? "Salvando…" : "Salvar"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function CreateUserDialog({
+  open,
+  onClose,
+  onCreated,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"admin" | "mentor">("mentor");
+  const [saving, setSaving] = useState(false);
+
+  function reset() {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setRole("mentor");
+  }
+
+  async function create() {
+    if (!email.trim() || password.length < 8) {
+      toast.error("Informe e-mail válido e senha com ao menos 8 caracteres.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await adminCreateUser({
+        data: { email: email.trim(), password, full_name: name.trim() || null, role },
+      });
+      toast.success("Usuário criado.");
+      reset();
+      onCreated();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao criar usuário.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) {
+          reset();
+          onClose();
+        }
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Adicionar usuário</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label>Nome completo</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Opcional" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>E-mail</Label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="nome@empresa.com"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Senha provisória</Label>
+            <Input
+              type="text"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Mínimo 8 caracteres"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Papel</Label>
+            <Select value={role} onValueChange={(v) => setRole(v as "admin" | "mentor")}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="mentor">Mentorado</SelectItem>
+                <SelectItem value="admin">Administrador</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => {
+              reset();
+              onClose();
+            }}
+            disabled={saving}
+          >
+            Cancelar
+          </Button>
+          <Button onClick={create} disabled={saving}>
+            {saving ? "Criando…" : "Criar usuário"}
           </Button>
         </DialogFooter>
       </DialogContent>
