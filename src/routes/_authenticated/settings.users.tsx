@@ -416,22 +416,7 @@ function AdminUsersPage() {
       />
 
       <HistoryDialog user={history} onClose={() => setHistory(null)} />
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
-      <EditUserDialog
-        user={editing}
-        onClose={() => setEditing(null)}
-        onSaved={() => {
-          setEditing(null);
-          qc.invalidateQueries({ queryKey: ["admin-users"] });
-        }}
-      />
 
       <CreateUserDialog
         open={creating}
