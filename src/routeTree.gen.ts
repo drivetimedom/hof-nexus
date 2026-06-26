@@ -14,6 +14,7 @@ import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
@@ -49,6 +50,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RTokenRoute = RTokenRouteImport.update({
+  id: '/r/$token',
+  path: '/r/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/insights': typeof AuthenticatedInsightsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/r/$token': typeof RTokenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByTo {
   '/insights': typeof AuthenticatedInsightsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/r/$token': typeof RTokenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/r/$token': typeof RTokenRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/_authenticated/settings/users': typeof AuthenticatedSettingsUsersRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/insights'
     | '/onboarding'
     | '/reports'
+    | '/r/$token'
     | '/reports/$id'
     | '/settings/integrations'
     | '/settings/users'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/insights'
     | '/onboarding'
     | '/reports'
+    | '/r/$token'
     | '/reports/$id'
     | '/settings/integrations'
     | '/settings/users'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/_authenticated/insights'
     | '/_authenticated/onboarding'
     | '/_authenticated/reports'
+    | '/r/$token'
     | '/_authenticated/reports/$id'
     | '/_authenticated/settings/integrations'
     | '/_authenticated/settings/users'
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
+  RTokenRoute: typeof RTokenRoute
   ApiPublicMetaCallbackRoute: typeof ApiPublicMetaCallbackRoute
   ApiPublicMetaSyncRoute: typeof ApiPublicMetaSyncRoute
 }
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r/$token': {
+      id: '/r/$token'
+      path: '/r/$token'
+      fullPath: '/r/$token'
+      preLoaderRoute: typeof RTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/reports': {
@@ -407,6 +427,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
+  RTokenRoute: RTokenRoute,
   ApiPublicMetaCallbackRoute: ApiPublicMetaCallbackRoute,
   ApiPublicMetaSyncRoute: ApiPublicMetaSyncRoute,
 }
