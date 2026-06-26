@@ -214,7 +214,8 @@ export const getMyCampaigns = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { days?: number } | undefined) => ({ days: data?.days ?? 30 }))
   .handler(async ({ context, data }) => {
-    const { userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId } = await resolveScope(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { fetchCampaignInsights, fetchCampaignStatuses, normalizeCampaign } =
       await import("@/lib/meta.server");
