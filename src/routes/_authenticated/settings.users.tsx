@@ -94,6 +94,7 @@ function AdminUsersPage() {
   const [history, setHistory] = useState<UserRow | null>(null);
   const [resetting, setResetting] = useState<UserRow | null>(null);
   const [creating, setCreating] = useState(false);
+  const [impersonating, setImpersonating] = useState<UserRow | null>(null);
 
   const setActive = useMutation({
     mutationFn: (vars: { targetUserId: string; is_active: boolean }) =>
