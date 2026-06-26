@@ -475,7 +475,7 @@ export const generateReport = createServerFn({ method: "POST" })
       data.title?.trim() ||
       `Relatório · ${conn?.account_name ?? "Conta Meta"} · ${range.label}`;
 
-    const { data: inserted, error } = await supabase
+    const { data: inserted, error } = await db
       .from("reports")
       .insert({
         user_id: userId,
