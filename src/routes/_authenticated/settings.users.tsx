@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
@@ -13,6 +13,8 @@ import {
   adminUpdateProfile,
   getMyRoles,
 } from "@/lib/admin.functions";
+import { startImpersonation } from "@/lib/impersonation.functions";
+import { setImpersonation } from "@/lib/impersonation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +24,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -44,6 +47,7 @@ import {
   KeyRound,
   History,
   Copy,
+  Eye,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings/users")({
