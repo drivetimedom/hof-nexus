@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import {
   adminCreateUser,
   adminGlobalStats,
+  adminListAuditLog,
   adminListUsers,
+  adminResetPassword,
   adminSetActive,
   adminSetRole,
   adminUpdateProfile,
@@ -39,6 +41,9 @@ import {
   ShieldCheck,
   Pencil,
   UserPlus,
+  KeyRound,
+  History,
+  Copy,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings/users")({
@@ -82,6 +87,8 @@ function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [editing, setEditing] = useState<UserRow | null>(null);
+  const [history, setHistory] = useState<UserRow | null>(null);
+  const [resetting, setResetting] = useState<UserRow | null>(null);
   const [creating, setCreating] = useState(false);
 
   const setActive = useMutation({
@@ -341,6 +348,7 @@ function AdminUsersPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          title="Editar usuário"
                           onClick={() => setEditing(u)}
                         >
                           <Pencil className="size-3.5" />
@@ -348,6 +356,22 @@ function AdminUsersPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          title="Redefinir senha"
+                          onClick={() => setResetting(u)}
+                        >
+                          <KeyRound className="size-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          title="Histórico"
+                          onClick={() => setHistory(u)}
+                        >
+                          <History className="size-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={u.is_active ? "outline" : "default"}
                           onClick={() =>
                             setActive.mutate({
                               targetUserId: u.id,
@@ -385,6 +409,14 @@ function AdminUsersPage() {
           qc.invalidateQueries({ queryKey: ["admin-users"] });
         }}
       />
+
+      <ResetPasswordDialog
+        user={resetting}
+        onClose={() => setResetting(null)}
+      />
+
+      <HistoryDialog user={history} onClose={() => setHistory(null)} />
+
 
       <CreateUserDialog
         open={creating}
@@ -433,12 +465,13 @@ function EditUserDialog({
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState<"admin" | "mentor">("mentor");
   const [saving, setSaving] = useState(false);
 
-  // Sync state when user changes
-  useMemo(() => {
+  useEffect(() => {
     setName(user?.full_name ?? "");
     setEmail(user?.email ?? "");
+    setRole(user?.roles.includes("admin") ? "admin" : "mentor");
   }, [user]);
 
   async function save() {
@@ -448,6 +481,10 @@ function EditUserDialog({
       await adminUpdateProfile({
         data: { targetUserId: user.id, full_name: name, email },
       });
+      const currentRole = user.roles.includes("admin") ? "admin" : "mentor";
+      if (role !== currentRole) {
+        await adminSetRole({ data: { targetUserId: user.id, role } });
+      }
       toast.success("Perfil atualizado.");
       onSaved();
     } catch (e) {
@@ -472,6 +509,18 @@ function EditUserDialog({
             <Label>E-mail</Label>
             <Input value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
+          <div className="space-y-1.5">
+            <Label>Papel</Label>
+            <Select value={role} onValueChange={(v) => setRole(v as "admin" | "mentor")}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="mentor">Mentorado</SelectItem>
+                <SelectItem value="admin">Administrador</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={saving}>
@@ -485,6 +534,187 @@ function EditUserDialog({
     </Dialog>
   );
 }
+
+function ResetPasswordDialog({
+  user,
+  onClose,
+}: {
+  user: UserRow | null;
+  onClose: () => void;
+}) {
+  const [password, setPassword] = useState("");
+  const [generated, setGenerated] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setPassword("");
+    setGenerated(null);
+  }, [user]);
+
+  async function submit(autoGenerate: boolean) {
+    if (!user) return;
+    if (!autoGenerate && password.length < 8) {
+      toast.error("A senha deve ter no mínimo 8 caracteres.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await adminResetPassword({
+        data: { targetUserId: user.id, password: autoGenerate ? undefined : password },
+      });
+      setGenerated(res.password);
+      toast.success("Senha redefinida.");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao redefinir.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Dialog open={!!user} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Redefinir senha</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Gere uma nova credencial para <span className="text-foreground">{user?.email}</span>.
+            Compartilhe com o usuário de forma segura.
+          </p>
+          {generated ? (
+            <div className="rounded-lg border border-primary/30 bg-primary/10 p-4">
+              <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+                Nova senha
+              </Label>
+              <div className="mt-2 flex items-center gap-2">
+                <code className="flex-1 break-all rounded bg-background/60 px-3 py-2 font-mono text-sm">
+                  {generated}
+                </code>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(generated);
+                    toast.success("Copiado.");
+                  }}
+                >
+                  <Copy className="size-3.5" />
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <Label>Senha personalizada (opcional)</Label>
+              <Input
+                type="text"
+                placeholder="Deixe em branco para gerar automaticamente"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          )}
+        </div>
+        <DialogFooter>
+          {generated ? (
+            <Button onClick={onClose}>Fechar</Button>
+          ) : (
+            <>
+              <Button variant="outline" onClick={onClose} disabled={saving}>
+                Cancelar
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => submit(true)}
+                disabled={saving}
+              >
+                Gerar automática
+              </Button>
+              <Button onClick={() => submit(false)} disabled={saving || password.length < 8}>
+                {saving ? "Redefinindo…" : "Definir senha"}
+              </Button>
+            </>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+const ACTION_LABELS: Record<string, string> = {
+  "user.create": "Usuário criado",
+  "user.activate": "Usuário reativado",
+  "user.deactivate": "Usuário desativado",
+  "profile.update": "Perfil atualizado",
+  "role.update": "Papel alterado",
+  "password.reset": "Senha redefinida",
+};
+
+function HistoryDialog({
+  user,
+  onClose,
+}: {
+  user: UserRow | null;
+  onClose: () => void;
+}) {
+  const logQ = useQuery({
+    queryKey: ["admin-audit", user?.id],
+    queryFn: () => adminListAuditLog({ data: { targetUserId: user!.id } }),
+    enabled: !!user,
+  });
+
+  return (
+    <Dialog open={!!user} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Histórico — {user?.full_name || user?.email}</DialogTitle>
+        </DialogHeader>
+        <div className="max-h-[60vh] overflow-y-auto">
+          {logQ.isLoading && (
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              Carregando histórico…
+            </div>
+          )}
+          {logQ.data && logQ.data.length === 0 && (
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              Nenhum evento registrado.
+            </div>
+          )}
+          <ol className="relative space-y-3 border-l border-border pl-5">
+            {logQ.data?.map((entry) => (
+              <li key={entry.id} className="relative">
+                <span className="absolute -left-[27px] top-1.5 size-2.5 rounded-full bg-primary ring-4 ring-background" />
+                <div className="surface-glass rounded-lg p-3">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <div className="text-sm font-medium">
+                      {ACTION_LABELS[entry.action] ?? entry.action}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {new Date(entry.created_at).toLocaleString("pt-BR")}
+                    </div>
+                  </div>
+                  {entry.actor && (
+                    <div className="mt-0.5 text-[11px] text-muted-foreground">
+                      por {entry.actor.full_name || entry.actor.email}
+                    </div>
+                  )}
+                  {entry.details &&
+                    typeof entry.details === "object" &&
+                    Object.keys(entry.details).length > 0 && (
+                      <pre className="mt-2 overflow-x-auto rounded bg-background/60 p-2 text-[11px] text-muted-foreground">
+                        {JSON.stringify(entry.details, null, 2)}
+                      </pre>
+                    )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 
 function CreateUserDialog({
   open,
