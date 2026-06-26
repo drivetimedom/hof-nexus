@@ -196,10 +196,11 @@ export const getMyMetrics = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { days?: number } | undefined) => ({ days: data?.days ?? 30 }))
   .handler(async ({ context, data }) => {
-    const { supabase, userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
     const since = new Date();
     since.setDate(since.getDate() - data.days);
-    const { data: rows, error } = await supabase
+    const { data: rows, error } = await db
       .from("daily_metrics")
       .select("date,spend,impressions,reach,clicks,ctr,cpc,leads,purchases,revenue,roas")
       .eq("user_id", userId)
