@@ -348,6 +348,7 @@ function AdminUsersPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          title="Editar usuário"
                           onClick={() => setEditing(u)}
                         >
                           <Pencil className="size-3.5" />
@@ -355,6 +356,22 @@ function AdminUsersPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          title="Redefinir senha"
+                          onClick={() => setResetting(u)}
+                        >
+                          <KeyRound className="size-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          title="Histórico"
+                          onClick={() => setHistory(u)}
+                        >
+                          <History className="size-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={u.is_active ? "outline" : "default"}
                           onClick={() =>
                             setActive.mutate({
                               targetUserId: u.id,
@@ -376,6 +393,29 @@ function AdminUsersPage() {
                         </Button>
                       </div>
                     </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <EditUserDialog
+        user={editing}
+        onClose={() => setEditing(null)}
+        onSaved={() => {
+          setEditing(null);
+          qc.invalidateQueries({ queryKey: ["admin-users"] });
+        }}
+      />
+
+      <ResetPasswordDialog
+        user={resetting}
+        onClose={() => setResetting(null)}
+      />
+
+      <HistoryDialog user={history} onClose={() => setHistory(null)} />
                   </tr>
                 );
               })}
