@@ -496,10 +496,12 @@ export const generateReport = createServerFn({ method: "POST" })
 export const listReports = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
+    const { data, error } = await db
       .from("reports")
       .select("id,title,account_name,period_start,period_end,report_token,is_public,created_at")
-      .eq("user_id", context.userId)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) throw new Error(error.message);
