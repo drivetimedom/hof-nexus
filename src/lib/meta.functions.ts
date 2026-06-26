@@ -18,10 +18,11 @@ function randomState() {
 export const getOnboardingStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
     const [{ data: profile }, { data: conn }] = await Promise.all([
-      supabase.from("profiles").select("onboarding_completed,email,full_name").eq("id", userId).maybeSingle(),
-      supabase
+      db.from("profiles").select("onboarding_completed,email,full_name").eq("id", userId).maybeSingle(),
+      db
         .from("meta_connections")
         .select("meta_user_id,ad_account_id,account_name,available_accounts,last_synced_at,token_expires_at")
         .eq("user_id", userId)
