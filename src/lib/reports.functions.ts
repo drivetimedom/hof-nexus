@@ -339,7 +339,8 @@ export const generateReport = createServerFn({ method: "POST" })
     },
   )
   .handler(async ({ context, data }) => {
-    const { supabase, userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
     const range = periodToRange(data.preset, {
       startDate: data.startDate,
       endDate: data.endDate,
@@ -347,13 +348,13 @@ export const generateReport = createServerFn({ method: "POST" })
 
     // Fetch user profile + meta connection + daily metrics in parallel.
     const [{ data: profile }, { data: conn }, { data: dailyRows }] = await Promise.all([
-      supabase.from("profiles").select("full_name,email").eq("id", userId).maybeSingle(),
-      supabase
+      db.from("profiles").select("full_name,email").eq("id", userId).maybeSingle(),
+      db
         .from("meta_connections")
         .select("ad_account_id,account_name")
         .eq("user_id", userId)
         .maybeSingle(),
-      supabase
+      db
         .from("daily_metrics")
         .select("date,spend,impressions,reach,clicks,leads,purchases,revenue")
         .eq("user_id", userId)
