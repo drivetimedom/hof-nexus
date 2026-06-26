@@ -23,6 +23,7 @@ import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedSettingsUsersRouteImport } from './routes/_authenticated/settings.users'
 import { Route as AuthenticatedSettingsIntegrationsRouteImport } from './routes/_authenticated/settings.integrations'
+import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 import { Route as ApiPublicMetaSyncRouteImport } from './routes/api/public/meta/sync'
 import { Route as ApiPublicMetaCallbackRouteImport } from './routes/api/public/meta/callback'
 
@@ -97,6 +98,11 @@ const AuthenticatedSettingsIntegrationsRoute =
     path: '/settings/integrations',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReportsIdRoute = AuthenticatedReportsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedReportsRoute,
+} as any)
 const ApiPublicMetaSyncRoute = ApiPublicMetaSyncRouteImport.update({
   id: '/api/public/meta/sync',
   path: '/api/public/meta/sync',
@@ -119,7 +125,8 @@ export interface FileRoutesByFullPath {
   '/funnel': typeof AuthenticatedFunnelRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/reports': typeof AuthenticatedReportsRoute
+  '/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
@@ -136,7 +143,8 @@ export interface FileRoutesByTo {
   '/funnel': typeof AuthenticatedFunnelRoute
   '/insights': typeof AuthenticatedInsightsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
-  '/reports': typeof AuthenticatedReportsRoute
+  '/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
@@ -155,7 +163,8 @@ export interface FileRoutesById {
   '/_authenticated/funnel': typeof AuthenticatedFunnelRoute
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
-  '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/_authenticated/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/insights'
     | '/onboarding'
     | '/reports'
+    | '/reports/$id'
     | '/settings/integrations'
     | '/settings/users'
     | '/api/public/meta/callback'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/insights'
     | '/onboarding'
     | '/reports'
+    | '/reports/$id'
     | '/settings/integrations'
     | '/settings/users'
     | '/api/public/meta/callback'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/_authenticated/insights'
     | '/_authenticated/onboarding'
     | '/_authenticated/reports'
+    | '/_authenticated/reports/$id'
     | '/_authenticated/settings/integrations'
     | '/_authenticated/settings/users'
     | '/api/public/meta/callback'
@@ -326,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIntegrationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reports/$id': {
+      id: '/_authenticated/reports/$id'
+      path: '/$id'
+      fullPath: '/reports/$id'
+      preLoaderRoute: typeof AuthenticatedReportsIdRouteImport
+      parentRoute: typeof AuthenticatedReportsRoute
+    }
     '/api/public/meta/sync': {
       id: '/api/public/meta/sync'
       path: '/api/public/meta/sync'
@@ -343,6 +362,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedReportsRouteChildren {
+  AuthenticatedReportsIdRoute: typeof AuthenticatedReportsIdRoute
+}
+
+const AuthenticatedReportsRouteChildren: AuthenticatedReportsRouteChildren = {
+  AuthenticatedReportsIdRoute: AuthenticatedReportsIdRoute,
+}
+
+const AuthenticatedReportsRouteWithChildren =
+  AuthenticatedReportsRoute._addFileChildren(AuthenticatedReportsRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCampaignsRoute: typeof AuthenticatedCampaignsRoute
@@ -350,7 +380,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFunnelRoute: typeof AuthenticatedFunnelRoute
   AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
-  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
+  AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedSettingsIntegrationsRoute: typeof AuthenticatedSettingsIntegrationsRoute
   AuthenticatedSettingsUsersRoute: typeof AuthenticatedSettingsUsersRoute
 }
@@ -362,7 +392,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFunnelRoute: AuthenticatedFunnelRoute,
   AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
-  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
+  AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedSettingsIntegrationsRoute:
     AuthenticatedSettingsIntegrationsRoute,
   AuthenticatedSettingsUsersRoute: AuthenticatedSettingsUsersRoute,
