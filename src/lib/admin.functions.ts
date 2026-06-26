@@ -26,7 +26,7 @@ async function logAudit(
     actor_user_id: actorId,
     target_user_id: targetUserId,
     action,
-    details,
+    details: details as never,
   });
 }
 
