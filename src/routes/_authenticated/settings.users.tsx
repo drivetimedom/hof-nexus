@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import {
   adminCreateUser,
   adminGlobalStats,
+  adminListAuditLog,
   adminListUsers,
+  adminResetPassword,
   adminSetActive,
   adminSetRole,
   adminUpdateProfile,
@@ -39,6 +41,9 @@ import {
   ShieldCheck,
   Pencil,
   UserPlus,
+  KeyRound,
+  History,
+  Copy,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings/users")({
