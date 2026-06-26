@@ -350,6 +350,16 @@ function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
+                        {!u.roles.includes("admin") && u.is_active && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            title="Entrar como mentorado"
+                            onClick={() => setImpersonating(u)}
+                          >
+                            <Eye className="size-3.5" />
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="outline"
