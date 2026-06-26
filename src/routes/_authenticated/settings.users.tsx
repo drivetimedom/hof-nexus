@@ -87,6 +87,8 @@ function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [editing, setEditing] = useState<UserRow | null>(null);
+  const [history, setHistory] = useState<UserRow | null>(null);
+  const [resetting, setResetting] = useState<UserRow | null>(null);
   const [creating, setCreating] = useState(false);
 
   const setActive = useMutation({
