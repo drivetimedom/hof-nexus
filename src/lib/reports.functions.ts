@@ -339,7 +339,8 @@ export const generateReport = createServerFn({ method: "POST" })
     },
   )
   .handler(async ({ context, data }) => {
-    const { supabase, userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
     const range = periodToRange(data.preset, {
       startDate: data.startDate,
       endDate: data.endDate,
@@ -347,13 +348,13 @@ export const generateReport = createServerFn({ method: "POST" })
 
     // Fetch user profile + meta connection + daily metrics in parallel.
     const [{ data: profile }, { data: conn }, { data: dailyRows }] = await Promise.all([
-      supabase.from("profiles").select("full_name,email").eq("id", userId).maybeSingle(),
-      supabase
+      db.from("profiles").select("full_name,email").eq("id", userId).maybeSingle(),
+      db
         .from("meta_connections")
         .select("ad_account_id,account_name")
         .eq("user_id", userId)
         .maybeSingle(),
-      supabase
+      db
         .from("daily_metrics")
         .select("date,spend,impressions,reach,clicks,leads,purchases,revenue")
         .eq("user_id", userId)
@@ -474,7 +475,7 @@ export const generateReport = createServerFn({ method: "POST" })
       data.title?.trim() ||
       `Relatório · ${conn?.account_name ?? "Conta Meta"} · ${range.label}`;
 
-    const { data: inserted, error } = await supabase
+    const { data: inserted, error } = await db
       .from("reports")
       .insert({
         user_id: userId,
@@ -495,10 +496,12 @@ export const generateReport = createServerFn({ method: "POST" })
 export const listReports = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
+    const { data, error } = await db
       .from("reports")
       .select("id,title,account_name,period_start,period_end,report_token,is_public,created_at")
-      .eq("user_id", context.userId)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) throw new Error(error.message);
@@ -512,10 +515,13 @@ export const getReport = createServerFn({ method: "GET" })
     return d;
   })
   .handler(async ({ context, data }) => {
-    const { data: row, error } = await context.supabase
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
+    const { data: row, error } = await db
       .from("reports")
       .select("id,title,report_token,is_public,created_at,snapshot_json")
       .eq("id", data.id)
+      .eq("user_id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!row) throw new Error("Relatório não encontrado.");

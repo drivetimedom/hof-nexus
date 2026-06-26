@@ -18,10 +18,11 @@ function randomState() {
 export const getOnboardingStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
     const [{ data: profile }, { data: conn }] = await Promise.all([
-      supabase.from("profiles").select("onboarding_completed,email,full_name").eq("id", userId).maybeSingle(),
-      supabase
+      db.from("profiles").select("onboarding_completed,email,full_name").eq("id", userId).maybeSingle(),
+      db
         .from("meta_connections")
         .select("meta_user_id,ad_account_id,account_name,available_accounts,last_synced_at,token_expires_at")
         .eq("user_id", userId)
@@ -195,10 +196,11 @@ export const getMyMetrics = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { days?: number } | undefined) => ({ days: data?.days ?? 30 }))
   .handler(async ({ context, data }) => {
-    const { supabase, userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
     const since = new Date();
     since.setDate(since.getDate() - data.days);
-    const { data: rows, error } = await supabase
+    const { data: rows, error } = await db
       .from("daily_metrics")
       .select("date,spend,impressions,reach,clicks,ctr,cpc,leads,purchases,revenue,roas")
       .eq("user_id", userId)
@@ -212,7 +214,8 @@ export const getMyCampaigns = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { days?: number } | undefined) => ({ days: data?.days ?? 30 }))
   .handler(async ({ context, data }) => {
-    const { userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId } = await resolveScope(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { fetchCampaignInsights, fetchCampaignStatuses, normalizeCampaign } =
       await import("@/lib/meta.server");

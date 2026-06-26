@@ -16,17 +16,18 @@ export const getFunnel = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { period?: Period } | undefined) => ({ period: d?.period ?? "30d" }))
   .handler(async ({ context, data }) => {
-    const { supabase, userId } = context;
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
     const { startDate, endDate, days } = dateRange(data.period);
 
     const [{ data: metrics }, { data: manuals }] = await Promise.all([
-      supabase
+      db
         .from("daily_metrics")
         .select("date, clicks, spend, purchases, revenue")
         .eq("user_id", userId)
         .gte("date", startDate)
         .lte("date", endDate),
-      supabase
+      db
         .from("funnel_manual_entries")
         .select("date, conversations, qualified_leads, sales_count, sales_revenue")
         .eq("user_id", userId)
@@ -120,11 +121,13 @@ export const listManualEntries = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { period?: Period } | undefined) => ({ period: d?.period ?? "30d" }))
   .handler(async ({ context, data }) => {
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
     const { startDate, endDate } = dateRange(data.period);
-    const { data: rows, error } = await context.supabase
+    const { data: rows, error } = await db
       .from("funnel_manual_entries")
       .select("*")
-      .eq("user_id", context.userId)
+      .eq("user_id", userId)
       .gte("date", startDate)
       .lte("date", endDate)
       .order("date", { ascending: false });

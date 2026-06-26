@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
@@ -13,6 +13,8 @@ import {
   adminUpdateProfile,
   getMyRoles,
 } from "@/lib/admin.functions";
+import { startImpersonation } from "@/lib/impersonation.functions";
+import { setImpersonation } from "@/lib/impersonation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +24,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -44,6 +47,7 @@ import {
   KeyRound,
   History,
   Copy,
+  Eye,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings/users")({
@@ -90,6 +94,7 @@ function AdminUsersPage() {
   const [history, setHistory] = useState<UserRow | null>(null);
   const [resetting, setResetting] = useState<UserRow | null>(null);
   const [creating, setCreating] = useState(false);
+  const [impersonating, setImpersonating] = useState<UserRow | null>(null);
 
   const setActive = useMutation({
     mutationFn: (vars: { targetUserId: string; is_active: boolean }) =>
@@ -345,6 +350,16 @@ function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
+                        {!u.roles.includes("admin") && u.is_active && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            title="Entrar como mentorado"
+                            onClick={() => setImpersonating(u)}
+                          >
+                            <Eye className="size-3.5" />
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="outline"
@@ -417,6 +432,11 @@ function AdminUsersPage() {
 
       <HistoryDialog user={history} onClose={() => setHistory(null)} />
 
+
+      <ImpersonateDialog
+        user={impersonating}
+        onClose={() => setImpersonating(null)}
+      />
 
       <CreateUserDialog
         open={creating}
@@ -821,6 +841,65 @@ function CreateUserDialog({
           </Button>
           <Button onClick={create} disabled={saving}>
             {saving ? "Criando…" : "Criar usuário"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ImpersonateDialog({
+  user,
+  onClose,
+}: {
+  user: UserRow | null;
+  onClose: () => void;
+}) {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const [loading, setLoading] = useState(false);
+
+  async function confirm() {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const res = await startImpersonation({ data: { targetUserId: user.id } });
+      setImpersonation({
+        userId: res.target.id,
+        fullName: res.target.full_name ?? null,
+        email: res.target.email ?? null,
+        startedAt: new Date().toISOString(),
+      });
+      qc.clear();
+      toast.success(`Visualizando como ${res.target.full_name || res.target.email}`);
+      onClose();
+      navigate({ to: "/dashboard" });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha ao iniciar visualização.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Dialog open={!!user} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Entrar como mentorado</DialogTitle>
+          <DialogDescription>
+            Você está prestes a visualizar a plataforma como{" "}
+            <strong>{user?.full_name || user?.email}</strong>. Todas as
+            permissões e dados exibidos serão os mesmos que ele vê normalmente.
+            Esta ação é registrada em auditoria.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={loading}>
+            Cancelar
+          </Button>
+          <Button onClick={confirm} disabled={loading} className="gap-2">
+            <Eye className="size-4" />
+            {loading ? "Iniciando…" : "Entrar como Mentorado"}
           </Button>
         </DialogFooter>
       </DialogContent>
