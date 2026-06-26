@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Users as UsersIcon,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PERIODS, type Period } from "@/lib/mock-data";
@@ -26,6 +27,9 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { getImpersonation, setImpersonation, type ImpersonationState } from "@/lib/impersonation";
+import { endImpersonation } from "@/lib/impersonation.functions";
+import { useQueryClient } from "@tanstack/react-query";
 
 const BASE_NAV = [
   { to: "/dashboard", label: "Visão Geral", icon: LayoutDashboard },
