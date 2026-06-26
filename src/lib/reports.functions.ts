@@ -515,10 +515,13 @@ export const getReport = createServerFn({ method: "GET" })
     return d;
   })
   .handler(async ({ context, data }) => {
-    const { data: row, error } = await context.supabase
+    const { resolveScope } = await import("@/lib/impersonation.server");
+    const { userId, db } = await resolveScope(context);
+    const { data: row, error } = await db
       .from("reports")
       .select("id,title,report_token,is_public,created_at,snapshot_json")
       .eq("id", data.id)
+      .eq("user_id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!row) throw new Error("Relatório não encontrado.");
