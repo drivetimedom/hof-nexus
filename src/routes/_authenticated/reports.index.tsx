@@ -31,7 +31,7 @@ import {
   type ReportPeriodPreset,
 } from "@/lib/reports.functions";
 
-export const Route = createFileRoute("/_authenticated/reports")({
+export const Route = createFileRoute("/_authenticated/reports/")({
   component: ReportsPage,
 });
 
