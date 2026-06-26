@@ -171,17 +171,11 @@ html, body {
 
 .report-page {
   min-height: 1120px; /* approx A4 portrait at 96dpi */
-  page-break-after: always;
-  break-after: page;
-}
-.report-page:last-child {
-  page-break-after: auto;
-  break-after: auto;
 }
 
 @page {
   size: A4;
-  margin: 0;
+  margin: 12mm 10mm;
 }
 
 @media print {
@@ -206,12 +200,39 @@ html, body {
     gap: 0 !important;
   }
   .report-doc > * + * { margin-top: 0 !important; }
+
   .report-page {
     border-radius: 0 !important;
     border: 0 !important;
     box-shadow: none !important;
-    min-height: 100vh;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: auto;
+    break-inside: auto;
   }
+  .report-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  /* Keep logical blocks intact across page breaks */
+  .report-page > header,
+  .report-page table thead { display: table-header-group; }
+  .report-page table tr,
+  .report-page table tbody tr { page-break-inside: avoid; break-inside: avoid; }
+
+  /* KPI cards, chart cards, insight cards: do not split mid-block */
+  .report-page .rounded-xl,
+  .report-page .surface-panel {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Recharts containers render at their measured size */
+  .recharts-responsive-container,
+  .recharts-wrapper { page-break-inside: avoid; break-inside: avoid; }
 }
+
