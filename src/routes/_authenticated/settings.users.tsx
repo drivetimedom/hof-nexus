@@ -847,3 +847,62 @@ function CreateUserDialog({
     </Dialog>
   );
 }
+
+function ImpersonateDialog({
+  user,
+  onClose,
+}: {
+  user: UserRow | null;
+  onClose: () => void;
+}) {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const [loading, setLoading] = useState(false);
+
+  async function confirm() {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const res = await startImpersonation({ data: { targetUserId: user.id } });
+      setImpersonation({
+        userId: res.target.id,
+        fullName: res.target.full_name ?? null,
+        email: res.target.email ?? null,
+        startedAt: new Date().toISOString(),
+      });
+      qc.clear();
+      toast.success(`Visualizando como ${res.target.full_name || res.target.email}`);
+      onClose();
+      navigate({ to: "/dashboard" });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha ao iniciar visualização.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Dialog open={!!user} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Entrar como mentorado</DialogTitle>
+          <DialogDescription>
+            Você está prestes a visualizar a plataforma como{" "}
+            <strong>{user?.full_name || user?.email}</strong>. Todas as
+            permissões e dados exibidos serão os mesmos que ele vê normalmente.
+            Esta ação é registrada em auditoria.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={loading}>
+            Cancelar
+          </Button>
+          <Button onClick={confirm} disabled={loading} className="gap-2">
+            <Eye className="size-4" />
+            {loading ? "Iniciando…" : "Entrar como Mentorado"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
