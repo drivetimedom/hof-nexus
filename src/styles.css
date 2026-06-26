@@ -164,3 +164,54 @@ html, body {
   background-image: radial-gradient(oklch(1 0 0 / 0.04) 1px, transparent 1px);
   background-size: 22px 22px;
 }
+
+/* =========================================================================
+ * Report document (screen + print)
+ * ========================================================================= */
+
+.report-page {
+  min-height: 1120px; /* approx A4 portrait at 96dpi */
+  page-break-after: always;
+  break-after: page;
+}
+.report-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    background: #0B0B0C !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Hide app chrome */
+  aside, nav, header.app-header, .report-toolbar,
+  [data-app-shell="sidebar"], [data-app-shell="mobile-nav"], [data-app-shell="header"] {
+    display: none !important;
+  }
+  main, .report-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .report-doc {
+    max-width: none !important;
+    width: 100% !important;
+    gap: 0 !important;
+  }
+  .report-doc > * + * { margin-top: 0 !important; }
+  .report-page {
+    border-radius: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
+  }
+}

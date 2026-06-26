@@ -203,6 +203,51 @@ export type Database = {
         }
         Relationships: []
       }
+      reports: {
+        Row: {
+          account_name: string | null
+          ad_account_id: string | null
+          created_at: string
+          id: string
+          is_public: boolean
+          period_end: string
+          period_start: string
+          report_token: string
+          snapshot_json: Json
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_name?: string | null
+          ad_account_id?: string | null
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          period_end: string
+          period_start: string
+          report_token?: string
+          snapshot_json: Json
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_name?: string | null
+          ad_account_id?: string | null
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          period_end?: string
+          period_start?: string
+          report_token?: string
+          snapshot_json?: Json
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_audit_log: {
         Row: {
           action: string
