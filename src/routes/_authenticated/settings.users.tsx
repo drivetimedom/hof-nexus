@@ -433,6 +433,11 @@ function AdminUsersPage() {
       <HistoryDialog user={history} onClose={() => setHistory(null)} />
 
 
+      <ImpersonateDialog
+        user={impersonating}
+        onClose={() => setImpersonating(null)}
+      />
+
       <CreateUserDialog
         open={creating}
         onClose={() => setCreating(false)}
