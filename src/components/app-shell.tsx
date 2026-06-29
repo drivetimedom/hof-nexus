@@ -170,7 +170,15 @@ export function AppShell({
             );
           })}
         </nav>
-        <div className="border-t border-border p-3">
+        <div className="border-t border-border p-3 space-y-2">
+          {impersonation && (
+            <button
+              onClick={exitImpersonation}
+              className="flex w-full items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-2 text-xs font-medium text-amber-100 transition hover:bg-amber-500/25"
+            >
+              <Eye className="size-4" /> Sair da Visualização
+            </button>
+          )}
           <div className="surface-glass flex items-center gap-3 rounded-lg p-3">
             <div className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--gradient-accent)] text-xs font-semibold text-primary-foreground">
               {initials}
@@ -218,7 +226,18 @@ export function AppShell({
                 );
               })}
             </nav>
-            <div className="border-t border-border p-3">
+            <div className="border-t border-border p-3 space-y-2">
+              {impersonation && (
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    exitImpersonation();
+                  }}
+                  className="flex w-full items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-2.5 text-sm font-medium text-amber-100"
+                >
+                  <Eye className="size-4" /> Sair da Visualização
+                </button>
+              )}
               <button onClick={signOut} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-card hover:text-foreground">
                 <LogOut className="size-4" /> Sair
               </button>

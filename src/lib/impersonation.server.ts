@@ -1,4 +1,4 @@
-import { getRequestHeader } from "@tanstack/react-start/server";
+import { getRequestHeader, getCookie } from "@tanstack/react-start/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -15,12 +15,20 @@ export type Scope = {
 };
 
 /**
- * Returns the effective user_id for the current request. If the admin is
- * impersonating another user, queries are scoped to that user via the
- * service-role client (RLS would otherwise block cross-user reads).
+ * Returns the effective user_id for the current request. Resolves the
+ * impersonation target from the `x-impersonate-user-id` header or, as a
+ * fallback (e.g. page reload before the client middleware kicks in), the
+ * `hof_impersonate_uid` cookie. Cross-user reads use the service-role
+ * client because RLS would otherwise block them.
  */
 export async function resolveScope(context: AuthCtx): Promise<Scope> {
-  const target = getRequestHeader("x-impersonate-user-id");
+  let target: string | undefined;
+  try {
+    target = getRequestHeader("x-impersonate-user-id") ?? undefined;
+    if (!target) target = getCookie("hof_impersonate_uid") ?? undefined;
+  } catch {
+    // outside request context — no impersonation
+  }
   if (!target || target === context.userId) {
     return {
       userId: context.userId,
