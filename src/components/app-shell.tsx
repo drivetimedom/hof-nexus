@@ -91,11 +91,7 @@ export function AppShell({
       {/* Sidebar — desktop */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-border bg-sidebar/80 backdrop-blur-xl lg:flex">
         <div className="flex h-16 items-center gap-3 border-b border-border px-5">
-          <BrandMark />
-          <div className="min-w-0">
-            <div className="font-display text-sm font-semibold tracking-tight">HOF Circle</div>
-            <div className="text-[11px] text-muted-foreground">Analytics</div>
-          </div>
+          <BrandMark className="h-11 sm:h-12" />
         </div>
         <nav className="flex-1 space-y-0.5 p-3">
           {NAV.map((item) => {
@@ -139,9 +135,8 @@ export function AppShell({
           <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />
           <aside className="fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col border-r border-border bg-sidebar lg:hidden">
             <div className="flex h-16 items-center justify-between border-b border-border px-5">
-              <div className="flex items-center gap-3">
-                <BrandMark />
-                <div className="font-display text-sm font-semibold tracking-tight">HOF Circle</div>
+              <div className="flex items-center">
+                <BrandMark className="h-11" />
               </div>
               <button onClick={() => setOpen(false)} className="rounded-md p-1.5 text-muted-foreground hover:bg-card hover:text-foreground">
                 <X className="size-4" />

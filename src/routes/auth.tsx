@@ -85,12 +85,9 @@ function AuthPage() {
       <div className="relative grid min-h-screen grid-cols-1 lg:grid-cols-2">
         {/* Left — brand */}
         <div className="hidden flex-col justify-between border-r border-border p-12 lg:flex">
-          <div className="flex items-center gap-3">
-            <BrandMark />
-            <div className="font-display text-sm font-semibold tracking-tight">
-              HOF Circle <span className="text-muted-foreground">Analytics</span>
-            </div>
-          </div>
+        <div className="flex items-center gap-3">
+          <BrandMark className="h-12" />
+        </div>
 
           <div className="space-y-10">
             <div>
@@ -124,10 +121,7 @@ function AuthPage() {
         <div className="flex items-center justify-center p-6 sm:p-10">
           <div className="w-full max-w-md">
             <div className="mb-8 flex items-center gap-3 lg:hidden">
-              <BrandMark />
-              <div className="font-display text-sm font-semibold tracking-tight">
-                HOF Circle <span className="text-muted-foreground">Analytics</span>
-              </div>
+              <BrandMark className="h-12" />
             </div>
 
             <div className="surface-panel p-7 sm:p-9">
