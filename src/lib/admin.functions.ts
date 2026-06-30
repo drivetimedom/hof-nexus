@@ -214,11 +214,12 @@ export const adminCreateUser = createServerFn({ method: "POST" })
 
     // Envia email de boas-vindas com a senha temporária (não bloqueia a criação se falhar)
     try {
+      const { createElement } = await import("react");
       const { renderToStaticMarkup } = await import("react-dom/server");
       const { WelcomeEmail } = await import("@/emails/WelcomeEmail");
       const { sendEmail } = await import("@/lib/email.server");
       const html = renderToStaticMarkup(
-        WelcomeEmail({
+        createElement(WelcomeEmail, {
           nome: data.full_name ?? "mentorado(a)",
           email: data.email,
           senhaTemporaria: data.password,
@@ -286,11 +287,12 @@ export const adminResetPassword = createServerFn({ method: "POST" })
         .eq("id", data.targetUserId)
         .maybeSingle();
       if (profile?.email) {
+        const { createElement } = await import("react");
         const { renderToStaticMarkup } = await import("react-dom/server");
         const { PasswordResetEmail } = await import("@/emails/PasswordResetEmail");
         const { sendEmail } = await import("@/lib/email.server");
         const html = renderToStaticMarkup(
-          PasswordResetEmail({
+          createElement(PasswordResetEmail, {
             nome: profile.full_name ?? "mentorado(a)",
             novaSenha: password,
           })

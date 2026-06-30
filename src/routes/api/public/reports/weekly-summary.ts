@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { WeeklySummaryEmail } from "@/emails/WeeklySummaryEmail";
 
@@ -28,8 +29,8 @@ export const Route = createFileRoute("/api/public/reports/weekly-summary")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
         // 1. Buscar mentorados com o opt-in ativo
-        const { data: profiles, error } = await supabaseAdmin
-          .from("profiles")
+        const profilesTable = supabaseAdmin.from("profiles") as any;
+        const { data: profiles, error } = await profilesTable
           .select("id,email,full_name")
           .eq("weekly_summary_email", true)
           .not("email", "is", null);
@@ -72,7 +73,7 @@ export const Route = createFileRoute("/api/public/reports/weekly-summary")({
 
             // 3. Renderizar o email
             const html = renderToStaticMarkup(
-              WeeklySummaryEmail({
+              createElement(WeeklySummaryEmail, {
                 nome: profile.full_name ?? "mentorado(a)",
                 periodLabel,
                 spend: brl(spend),

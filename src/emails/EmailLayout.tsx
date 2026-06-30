@@ -111,6 +111,28 @@ export const EmailButton: React.FC<{
   </div>
 );
 
+export const EmailAlert: React.FC<{
+  children: React.ReactNode;
+  variant?: "info" | "warning";
+}> = ({ children, variant = "info" }) => {
+  const isWarning = variant === "warning";
+
+  return (
+    <div
+      style={{
+        backgroundColor: isWarning ? "#fff7ed" : "#eff6ff",
+        border: `1px solid ${isWarning ? "#fed7aa" : "#bfdbfe"}`,
+        borderRadius: "10px",
+        color: isWarning ? "#9a3412" : "#1e3a8a",
+        margin: "22px 0",
+        padding: "16px",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 export const EmailKpiGrid: React.FC<{
   items: { label: string; value: string }[];
 }> = ({ items }) => (
