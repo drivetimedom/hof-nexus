@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_insights: {
+        Row: {
+          created_at: string
+          expires_at: string
+          generated_at: string
+          id: string
+          insights: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          generated_at?: string
+          id?: string
+          insights?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          generated_at?: string
+          id?: string
+          insights?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_metrics: {
         Row: {
           ad_account_id: string
