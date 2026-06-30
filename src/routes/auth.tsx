@@ -245,7 +245,6 @@ async function resolveRoleDestination(userId: string): Promise<"/admin" | "/dash
   return data ? "/admin" : "/dashboard";
 }
 
-import { useState } from "react";
 import logoAsset from "@/assets/ads-logo.png.asset.json";
 
 export function BrandMark({ className = "" }: { className?: string }) {
