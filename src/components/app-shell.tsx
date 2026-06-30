@@ -14,7 +14,6 @@ import {
   Menu,
   X,
   Users as UsersIcon,
-  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PERIODS, type Period } from "@/lib/mock-data";
@@ -27,9 +26,6 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { getImpersonation, setImpersonation, type ImpersonationState } from "@/lib/impersonation";
-import { endImpersonation } from "@/lib/impersonation.functions";
-import { useQueryClient } from "@tanstack/react-query";
 
 const BASE_NAV = [
   { to: "/dashboard", label: "Visão Geral", icon: LayoutDashboard },
@@ -60,9 +56,7 @@ export function AppShell({
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState(false);
-  const [impersonation, setImpersonationState] = useState<ImpersonationState | null>(null);
   const navigate = useNavigate();
-  const qc = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
@@ -80,19 +74,7 @@ export function AppShell({
     });
   }, []);
 
-  useEffect(() => {
-    const sync = () => setImpersonationState(getImpersonation());
-    sync();
-    window.addEventListener("hof:impersonation", sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener("hof:impersonation", sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
-
-  // Hide admin nav while impersonating to match mentee view.
-  const NAV = isAdmin && !impersonation ? [...BASE_NAV, ...ADMIN_NAV] : BASE_NAV;
+  const NAV = isAdmin ? [...BASE_NAV, ...ADMIN_NAV] : BASE_NAV;
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -100,51 +82,20 @@ export function AppShell({
     navigate({ to: "/auth" });
   }
 
-  async function exitImpersonation() {
-    if (!impersonation) return;
-    try {
-      await endImpersonation({ data: { targetUserId: impersonation.userId } });
-    } catch (e) {
-      console.error(e);
-    }
-    setImpersonation(null);
-    qc.clear();
-    toast.success("Visualização encerrada.");
-    navigate({ to: "/settings/users" });
-  }
-
   const initials = email ? email.slice(0, 2).toUpperCase() : "HC";
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
-      {impersonation && (
-        <div className="sticky top-0 z-50 flex items-center justify-between gap-3 border-b border-amber-500/40 bg-amber-500/15 px-4 py-2.5 text-amber-100 backdrop-blur-xl sm:px-8">
-          <div className="flex min-w-0 items-center gap-2 text-xs sm:text-sm">
-            <Eye className="size-4 shrink-0" />
-            <span className="truncate">
-              Você está visualizando a plataforma como{" "}
-              <strong className="font-semibold">
-                {impersonation.fullName || impersonation.email || "mentorado"}
-              </strong>
-            </span>
-          </div>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={exitImpersonation}
-            className="shrink-0 border-amber-400/60 bg-amber-500/20 text-amber-50 hover:bg-amber-500/30"
-          >
-            Sair da Visualização
-          </Button>
-        </div>
-      )}
       <div className="hero-glow pointer-events-none fixed inset-x-0 top-0 h-[420px]" />
-
 
       {/* Sidebar — desktop */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-border bg-sidebar/80 backdrop-blur-xl lg:flex">
-        <div className="flex h-16 items-center border-b border-border px-5">
+        <div className="flex h-16 items-center gap-3 border-b border-border px-5">
           <BrandMark />
+          <div className="min-w-0">
+            <div className="font-display text-sm font-semibold tracking-tight">HOF Circle</div>
+            <div className="text-[11px] text-muted-foreground">Analytics</div>
+          </div>
         </div>
         <nav className="flex-1 space-y-0.5 p-3">
           {NAV.map((item) => {
@@ -166,15 +117,7 @@ export function AppShell({
             );
           })}
         </nav>
-        <div className="border-t border-border p-3 space-y-2">
-          {impersonation && (
-            <button
-              onClick={exitImpersonation}
-              className="flex w-full items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-2 text-xs font-medium text-amber-100 transition hover:bg-amber-500/25"
-            >
-              <Eye className="size-4" /> Sair da Visualização
-            </button>
-          )}
+        <div className="border-t border-border p-3">
           <div className="surface-glass flex items-center gap-3 rounded-lg p-3">
             <div className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--gradient-accent)] text-xs font-semibold text-primary-foreground">
               {initials}
@@ -196,7 +139,10 @@ export function AppShell({
           <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />
           <aside className="fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col border-r border-border bg-sidebar lg:hidden">
             <div className="flex h-16 items-center justify-between border-b border-border px-5">
-              <BrandMark />
+              <div className="flex items-center gap-3">
+                <BrandMark />
+                <div className="font-display text-sm font-semibold tracking-tight">HOF Circle</div>
+              </div>
               <button onClick={() => setOpen(false)} className="rounded-md p-1.5 text-muted-foreground hover:bg-card hover:text-foreground">
                 <X className="size-4" />
               </button>
@@ -219,18 +165,7 @@ export function AppShell({
                 );
               })}
             </nav>
-            <div className="border-t border-border p-3 space-y-2">
-              {impersonation && (
-                <button
-                  onClick={() => {
-                    setOpen(false);
-                    exitImpersonation();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/15 px-3 py-2.5 text-sm font-medium text-amber-100"
-                >
-                  <Eye className="size-4" /> Sair da Visualização
-                </button>
-              )}
+            <div className="border-t border-border p-3">
               <button onClick={signOut} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-card hover:text-foreground">
                 <LogOut className="size-4" /> Sair
               </button>
@@ -274,8 +209,10 @@ export function AppShell({
                   <DropdownMenuContent align="end" className="w-56 border-border bg-popover">
                     <DropdownMenuLabel className="text-xs text-muted-foreground">{email}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-sm">
-                      <Settings className="mr-2 size-4" /> Preferências
+                    <DropdownMenuItem asChild className="text-sm">
+                      <Link to="/settings/preferences">
+                        <Settings className="mr-2 size-4" /> Preferências
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={signOut} className="text-sm">
                       <LogOut className="mr-2 size-4" /> Sair
