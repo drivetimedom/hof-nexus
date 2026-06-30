@@ -24,8 +24,10 @@ import { Route as AuthenticatedCampaignsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedSettingsUsersRouteImport } from './routes/_authenticated/settings.users'
+import { Route as AuthenticatedSettingsPreferencesRouteImport } from './routes/_authenticated/settings.preferences'
 import { Route as AuthenticatedSettingsIntegrationsRouteImport } from './routes/_authenticated/settings.integrations'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
+import { Route as ApiPublicReportsWeeklySummaryRouteImport } from './routes/api/public/reports/weekly-summary'
 import { Route as ApiPublicMetaSyncRouteImport } from './routes/api/public/meta/sync'
 import { Route as ApiPublicMetaCallbackRouteImport } from './routes/api/public/meta/callback'
 
@@ -105,6 +107,12 @@ const AuthenticatedSettingsUsersRoute =
     path: '/settings/users',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSettingsPreferencesRoute =
+  AuthenticatedSettingsPreferencesRouteImport.update({
+    id: '/settings/preferences',
+    path: '/settings/preferences',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsIntegrationsRoute =
   AuthenticatedSettingsIntegrationsRouteImport.update({
     id: '/settings/integrations',
@@ -116,6 +124,12 @@ const AuthenticatedReportsIdRoute = AuthenticatedReportsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedReportsRoute,
 } as any)
+const ApiPublicReportsWeeklySummaryRoute =
+  ApiPublicReportsWeeklySummaryRouteImport.update({
+    id: '/api/public/reports/weekly-summary',
+    path: '/api/public/reports/weekly-summary',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicMetaSyncRoute = ApiPublicMetaSyncRouteImport.update({
   id: '/api/public/meta/sync',
   path: '/api/public/meta/sync',
@@ -142,10 +156,12 @@ export interface FileRoutesByFullPath {
   '/r/$token': typeof RTokenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
+  '/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
   '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
+  '/api/public/reports/weekly-summary': typeof ApiPublicReportsWeeklySummaryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -161,10 +177,12 @@ export interface FileRoutesByTo {
   '/r/$token': typeof RTokenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
+  '/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
   '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
+  '/api/public/reports/weekly-summary': typeof ApiPublicReportsWeeklySummaryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -183,10 +201,12 @@ export interface FileRoutesById {
   '/r/$token': typeof RTokenRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
+  '/_authenticated/settings/preferences': typeof AuthenticatedSettingsPreferencesRoute
   '/_authenticated/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/api/public/meta/callback': typeof ApiPublicMetaCallbackRoute
   '/api/public/meta/sync': typeof ApiPublicMetaSyncRoute
+  '/api/public/reports/weekly-summary': typeof ApiPublicReportsWeeklySummaryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -205,10 +225,12 @@ export interface FileRouteTypes {
     | '/r/$token'
     | '/reports/$id'
     | '/settings/integrations'
+    | '/settings/preferences'
     | '/settings/users'
     | '/reports/'
     | '/api/public/meta/callback'
     | '/api/public/meta/sync'
+    | '/api/public/reports/weekly-summary'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -224,10 +246,12 @@ export interface FileRouteTypes {
     | '/r/$token'
     | '/reports/$id'
     | '/settings/integrations'
+    | '/settings/preferences'
     | '/settings/users'
     | '/reports'
     | '/api/public/meta/callback'
     | '/api/public/meta/sync'
+    | '/api/public/reports/weekly-summary'
   id:
     | '__root__'
     | '/'
@@ -245,10 +269,12 @@ export interface FileRouteTypes {
     | '/r/$token'
     | '/_authenticated/reports/$id'
     | '/_authenticated/settings/integrations'
+    | '/_authenticated/settings/preferences'
     | '/_authenticated/settings/users'
     | '/_authenticated/reports/'
     | '/api/public/meta/callback'
     | '/api/public/meta/sync'
+    | '/api/public/reports/weekly-summary'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -260,6 +286,7 @@ export interface RootRouteChildren {
   RTokenRoute: typeof RTokenRoute
   ApiPublicMetaCallbackRoute: typeof ApiPublicMetaCallbackRoute
   ApiPublicMetaSyncRoute: typeof ApiPublicMetaSyncRoute
+  ApiPublicReportsWeeklySummaryRoute: typeof ApiPublicReportsWeeklySummaryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -369,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/settings/preferences': {
+      id: '/_authenticated/settings/preferences'
+      path: '/settings/preferences'
+      fullPath: '/settings/preferences'
+      preLoaderRoute: typeof AuthenticatedSettingsPreferencesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/integrations': {
       id: '/_authenticated/settings/integrations'
       path: '/settings/integrations'
@@ -382,6 +416,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reports/$id'
       preLoaderRoute: typeof AuthenticatedReportsIdRouteImport
       parentRoute: typeof AuthenticatedReportsRoute
+    }
+    '/api/public/reports/weekly-summary': {
+      id: '/api/public/reports/weekly-summary'
+      path: '/api/public/reports/weekly-summary'
+      fullPath: '/api/public/reports/weekly-summary'
+      preLoaderRoute: typeof ApiPublicReportsWeeklySummaryRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/meta/sync': {
       id: '/api/public/meta/sync'
@@ -422,6 +463,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedSettingsIntegrationsRoute: typeof AuthenticatedSettingsIntegrationsRoute
+  AuthenticatedSettingsPreferencesRoute: typeof AuthenticatedSettingsPreferencesRoute
   AuthenticatedSettingsUsersRoute: typeof AuthenticatedSettingsUsersRoute
 }
 
@@ -435,6 +477,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedSettingsIntegrationsRoute:
     AuthenticatedSettingsIntegrationsRoute,
+  AuthenticatedSettingsPreferencesRoute: AuthenticatedSettingsPreferencesRoute,
   AuthenticatedSettingsUsersRoute: AuthenticatedSettingsUsersRoute,
 }
 
@@ -450,6 +493,7 @@ const rootRouteChildren: RootRouteChildren = {
   RTokenRoute: RTokenRoute,
   ApiPublicMetaCallbackRoute: ApiPublicMetaCallbackRoute,
   ApiPublicMetaSyncRoute: ApiPublicMetaSyncRoute,
+  ApiPublicReportsWeeklySummaryRoute: ApiPublicReportsWeeklySummaryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
