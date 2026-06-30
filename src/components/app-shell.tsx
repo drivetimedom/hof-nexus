@@ -143,12 +143,8 @@ export function AppShell({
 
       {/* Sidebar — desktop */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-border bg-sidebar/80 backdrop-blur-xl lg:flex">
-        <div className="flex h-16 items-center gap-3 border-b border-border px-5">
+        <div className="flex h-16 items-center border-b border-border px-5">
           <BrandMark />
-          <div className="min-w-0">
-            <div className="font-display text-sm font-semibold tracking-tight">HOF Circle</div>
-            <div className="text-[11px] text-muted-foreground">Analytics</div>
-          </div>
         </div>
         <nav className="flex-1 space-y-0.5 p-3">
           {NAV.map((item) => {
