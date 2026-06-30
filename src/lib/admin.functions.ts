@@ -211,6 +211,28 @@ export const adminCreateUser = createServerFn({ method: "POST" })
       full_name: data.full_name,
       role: data.role,
     });
+
+    // Envia email de boas-vindas com a senha temporária (não bloqueia a criação se falhar)
+    try {
+      const { renderToStaticMarkup } = await import("react-dom/server");
+      const { WelcomeEmail } = await import("@/emails/WelcomeEmail");
+      const { sendEmail } = await import("@/lib/email.server");
+      const html = renderToStaticMarkup(
+        WelcomeEmail({
+          nome: data.full_name ?? "mentorado(a)",
+          email: data.email,
+          senhaTemporaria: data.password,
+        })
+      );
+      await sendEmail({
+        to: data.email,
+        subject: "Bem-vindo(a) ao HOF Circle Analytics",
+        html,
+      });
+    } catch (e) {
+      console.error("[adminCreateUser] Falha ao enviar email de boas-vindas:", e);
+    }
+
     return { ok: true, id: newId };
   });
 
@@ -255,6 +277,34 @@ export const adminResetPassword = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
     await logAudit(context.userId, data.targetUserId, "password.reset");
+
+    // Envia email com a nova senha (não bloqueia a operação se falhar)
+    try {
+      const { data: profile } = await supabaseAdmin
+        .from("profiles")
+        .select("email,full_name")
+        .eq("id", data.targetUserId)
+        .maybeSingle();
+      if (profile?.email) {
+        const { renderToStaticMarkup } = await import("react-dom/server");
+        const { PasswordResetEmail } = await import("@/emails/PasswordResetEmail");
+        const { sendEmail } = await import("@/lib/email.server");
+        const html = renderToStaticMarkup(
+          PasswordResetEmail({
+            nome: profile.full_name ?? "mentorado(a)",
+            novaSenha: password,
+          })
+        );
+        await sendEmail({
+          to: profile.email,
+          subject: "Sua senha foi redefinida — HOF Circle Analytics",
+          html,
+        });
+      }
+    } catch (e) {
+      console.error("[adminResetPassword] Falha ao enviar email:", e);
+    }
+
     return { ok: true, password };
   });
 
