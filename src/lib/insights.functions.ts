@@ -9,9 +9,7 @@ export type AiInsight = {
   impact: "Alto" | "Médio" | "Baixo";
 };
 
-// ─── Geração via Anthropic ────────────────────────────────────────────────────
-
-async function generateInsightsFromAI(metrics: {
+type InsightMetrics = {
   spend: number;
   revenue: number;
   roas: number;
@@ -31,9 +29,134 @@ async function generateInsightsFromAI(metrics: {
     status: string;
   }>;
   periodDays: number;
-}): Promise<AiInsight[]> {
+};
+
+function generateStrategicFallbackInsights(metrics: InsightMetrics): AiInsight[] {
+  const insights: AiInsight[] = [];
+
+  if (metrics.leads === 0) {
+    insights.push({
+      id: "1",
+      title: "Motor de captação sem leads",
+      body: "O investimento ainda não gerou leads no período analisado. Revise criativo, público e promessa da oferta antes de ampliar verba para manter a Demanda Previsível saudável.",
+      tag: "alerta",
+      impact: "Alto",
+    });
+  } else if (metrics.cpl > 50) {
+    insights.push({
+      id: "1",
+      title: "CPL em faixa crítica",
+      body: `O CPL médio está em R$${metrics.cpl.toFixed(2)}, acima do benchmark crítico do HOF Circle. Priorize ajustes na oferta e no público antes de buscar escala na Máquina de Vendas.`,
+      tag: "alerta",
+      impact: "Alto",
+    });
+  } else if (metrics.cpl > 20) {
+    insights.push({
+      id: "1",
+      title: "CPL acima do ideal",
+      body: `O CPL médio está em R$${metrics.cpl.toFixed(2)}, sinalizando oportunidade de otimização. Teste novas abordagens para paciente modelo e reduza fricção na conversão do anúncio.`,
+      tag: "oportunidade",
+      impact: "Médio",
+    });
+  } else {
+    insights.push({
+      id: "1",
+      title: "Captação em faixa saudável",
+      body: `O CPL médio de R$${metrics.cpl.toFixed(2)} está dentro de uma faixa favorável para geração de demanda. Mantenha controle de qualidade dos leads antes de aumentar investimento.`,
+      tag: "tendencia",
+      impact: "Alto",
+    });
+  }
+
+  if (metrics.ctr < 0.7) {
+    insights.push({
+      id: "2",
+      title: "Criativo com baixa tração",
+      body: `O CTR médio está em ${metrics.ctr.toFixed(2)}%, abaixo do mínimo recomendado. Troque ângulo, imagem e chamada para recuperar atenção no topo do funil.`,
+      tag: "alerta",
+      impact: "Alto",
+    });
+  } else if (metrics.ctr >= 3) {
+    insights.push({
+      id: "2",
+      title: "Criativo com forte demanda",
+      body: `O CTR médio de ${metrics.ctr.toFixed(2)}% indica alta aderência da mensagem. Use esse criativo como base para variações e expansão controlada de orçamento.`,
+      tag: "tendencia",
+      impact: "Alto",
+    });
+  } else {
+    insights.push({
+      id: "2",
+      title: "Criativo em zona de melhoria",
+      body: `O CTR médio está em ${metrics.ctr.toFixed(2)}%, com espaço para evoluir. Teste novas provas, dores e desejos do paciente para aumentar eficiência do motor de captação.`,
+      tag: "oportunidade",
+      impact: "Médio",
+    });
+  }
+
+  if (metrics.roas < 3) {
+    insights.push({
+      id: "3",
+      title: "ROI abaixo da escala",
+      body: `O retorno atribuído está em ${metrics.roas.toFixed(2)}x, abaixo do ponto recomendado para escalar. Foque em conversão comercial e ticket médio antes de aumentar verba.`,
+      tag: "alerta",
+      impact: "Alto",
+    });
+  } else if (metrics.roas >= 10) {
+    insights.push({
+      id: "3",
+      title: "Campanhas prontas para escala",
+      body: `O retorno de ${metrics.roas.toFixed(2)}x indica forte eficiência. Escale gradualmente preservando CPL, CTR e qualidade dos agendamentos.`,
+      tag: "oportunidade",
+      impact: "Alto",
+    });
+  } else {
+    insights.push({
+      id: "3",
+      title: "Escala gradual recomendada",
+      body: `O retorno de ${metrics.roas.toFixed(2)}x está em faixa saudável. Aumente orçamento em ciclos curtos e monitore se a Máquina de Vendas sustenta a demanda.`,
+      tag: "tendencia",
+      impact: "Médio",
+    });
+  }
+
+  const activeCampaigns = metrics.campaigns.filter((campaign) => campaign.status === "ACTIVE");
+  const bestCampaign = [...metrics.campaigns].sort((a, b) => b.roas - a.roas)[0];
+
+  if (bestCampaign) {
+    insights.push({
+      id: "4",
+      title: "Campanha referência identificada",
+      body: `"${bestCampaign.name}" concentra o melhor retorno do período com ${bestCampaign.roas.toFixed(2)}x. Use seus elementos como padrão para novos testes de oferta e criativo.`,
+      tag: "oportunidade",
+      impact: "Médio",
+    });
+  } else {
+    insights.push({
+      id: "4",
+      title: "Base pronta para diagnóstico",
+      body: `Foram analisados ${metrics.periodDays} dias de métricas consolidadas. Conecte e sincronize campanhas para ampliar a precisão das recomendações por ativo.`,
+      tag: "tendencia",
+      impact: "Baixo",
+    });
+  }
+
+  insights.push({
+    id: "5",
+    title: "Próximo passo estratégico",
+    body: `${activeCampaigns.length || metrics.campaigns.length} campanhas foram consideradas na análise. Priorize decisões por CPL, CTR e retorno real para evitar escala baseada apenas em volume de cliques.`,
+    tag: "oportunidade",
+    impact: "Médio",
+  });
+
+  return insights.slice(0, 5);
+}
+
+// ─── Geração via Anthropic ────────────────────────────────────────────────────
+
+async function generateInsightsFromAI(metrics: InsightMetrics): Promise<AiInsight[]> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error("ANTHROPIC_API_KEY não configurada.");
+  if (!apiKey) return generateStrategicFallbackInsights(metrics);
 
   const SYSTEM_PROMPT = `Você é a inteligência estratégica do HOF Circle Analytics, uma plataforma exclusiva para profissionais de harmonização orofacial (HOF) do Brasil.
 
@@ -138,9 +261,7 @@ Gere os insights agora:`;
     }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Erro na API Anthropic: ${response.status}`);
-  }
+  if (!response.ok) return generateStrategicFallbackInsights(metrics);
 
   const data = (await response.json()) as {
     content: Array<{ type: string; text?: string }>;
@@ -150,9 +271,15 @@ Gere os insights agora:`;
     .map((b) => b.text ?? "")
     .join("");
 
-  const clean = text.replace(/```json|```/g, "").trim();
-  const parsed = JSON.parse(clean) as AiInsight[];
-  return parsed;
+  try {
+    const clean = text.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(clean) as AiInsight[];
+    return Array.isArray(parsed) && parsed.length > 0
+      ? parsed
+      : generateStrategicFallbackInsights(metrics);
+  } catch {
+    return generateStrategicFallbackInsights(metrics);
+  }
 }
 
 // ─── Server Function Principal ────────────────────────────────────────────────

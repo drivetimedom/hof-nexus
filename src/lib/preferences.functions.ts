@@ -5,8 +5,8 @@ export const getMyPreferences = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const { data, error } = await supabase
-      .from("profiles")
+    const profiles = supabase.from("profiles") as any;
+    const { data, error } = await profiles
       .select("email,full_name,weekly_summary_email,created_at")
       .eq("id", userId)
       .maybeSingle();
@@ -40,8 +40,8 @@ export const updateMyNotificationPrefs = createServerFn({ method: "POST" })
   .inputValidator((data: { weeklySummaryEmail: boolean }) => data)
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
-    const { error } = await supabase
-      .from("profiles")
+    const profiles = supabase.from("profiles") as any;
+    const { error } = await profiles
       .update({
         weekly_summary_email: data.weeklySummaryEmail,
         updated_at: new Date().toISOString(),
