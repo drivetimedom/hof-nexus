@@ -245,11 +245,15 @@ async function resolveRoleDestination(userId: string): Promise<"/admin" | "/dash
   return data ? "/admin" : "/dashboard";
 }
 
+import logoAsset from "@/assets/ads-logo.png.asset.json";
+
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
-    <div className={`relative grid size-9 place-items-center rounded-lg border border-border bg-card ${className}`}>
-      <div className="absolute inset-0 rounded-lg bg-[var(--gradient-accent)] opacity-20" />
-      <div className="relative font-display text-[13px] font-bold tracking-tight">H<span className="text-primary">·</span>C</div>
-    </div>
+    <img
+      src={logoAsset.url}
+      alt="ADS HOF Circle"
+      className={`h-9 w-auto select-none object-contain ${className}`}
+      draggable={false}
+    />
   );
 }
