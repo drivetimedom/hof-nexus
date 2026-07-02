@@ -162,10 +162,10 @@ function EmptyState({
     <div className="mx-auto mt-12 grid max-w-2xl place-items-center text-center">
       <div className="surface-panel w-full p-10">
         <div className="mx-auto grid size-14 place-items-center rounded-xl bg-[var(--gradient-accent)]">
-          <Plug className="size-6 text-primary-foreground" />
+          <Plug className="size-6 text-[var(--bg)]" />
         </div>
-        <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight">{title}</h2>
-        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{description}</p>
+        <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight text-t1">{title}</h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-t2">{description}</p>
         <Link to={to} className="mt-6 inline-block">
           <Button className="h-11 px-6">{cta}</Button>
         </Link>
