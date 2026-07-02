@@ -234,7 +234,7 @@ function PeriodSelector({ value, onChange }: { value: Period; onChange: (p: Peri
           <ChevronDown className="ml-1 size-3.5 text-t3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="border-border bg-popover">
+      <DropdownMenuContent align="end" className="border-glass-border bg-glass">
         {PERIODS.map((p) => (
           <DropdownMenuItem key={p.id} onClick={() => onChange(p.id)} className="text-sm">
             {p.label}
