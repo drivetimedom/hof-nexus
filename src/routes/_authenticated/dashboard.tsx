@@ -115,7 +115,7 @@ function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="surface-panel p-8 text-sm text-muted-foreground">
+          <div className="surface-panel p-8 text-sm text-t2">
             Ainda não há métricas sincronizadas para o período. Use “Sincronizar agora” em
             Configurações → Meta Ads para coletar os dados da conta conectada.
           </div>
