@@ -32,7 +32,7 @@ export function KpiCard({ kpi, sparkline }: { kpi: Kpi; sparkline?: number[] }) 
 
       {sparkline && <MiniSpark values={sparkline} positive={positive} />}
 
-      <div className="mt-3 text-[11px] text-muted-foreground">{kpi.hint}</div>
+      <div className="mt-3 text-[11px] text-t3">{kpi.hint}</div>
     </div>
   );
 }
