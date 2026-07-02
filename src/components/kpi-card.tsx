@@ -7,7 +7,7 @@ export function KpiCard({ kpi, sparkline }: { kpi: Kpi; sparkline?: number[] }) 
   const positive = isCpl ? kpi.delta < 0 : kpi.delta > 0;
 
   return (
-    <div className="surface-panel group relative overflow-hidden p-5 transition hover:border-white/15">
+    <div className="surface-panel group relative overflow-hidden p-5 hover:border-glass-border-hover">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
