@@ -230,12 +230,12 @@ function PeriodSelector({ value, onChange }: { value: Period; onChange: (p: Peri
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="h-9 border-glass-border bg-glass text-xs font-medium text-t2 transition-ea hover:bg-glass-strong hover:text-t1">
+        <Button variant="outline" className="h-9 rounded-[var(--r)] border-glass-border bg-glass px-2.5 text-xs font-medium text-t2 transition-ea hover:border-glass-border-hover hover:bg-glass-strong hover:text-t1 sm:px-3">
           {PERIODS.find((p) => p.id === value)?.label}
           <ChevronDown className="ml-1 size-3.5 text-t3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="border-glass-border bg-glass">
+      <DropdownMenuContent align="end" className="border-glass-border bg-[#0C0A08]/95 backdrop-blur-xl">
         {PERIODS.map((p) => (
           <DropdownMenuItem key={p.id} onClick={() => onChange(p.id)} className="text-sm">
             {p.label}
