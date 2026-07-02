@@ -44,7 +44,7 @@ function DashboardPage() {
     return (
       <AppShell title="Centro de decisão">
         <div className="grid h-[60vh] place-items-center">
-          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+          <Loader2 className="size-6 animate-spin text-t2" />
         </div>
       </AppShell>
     );
