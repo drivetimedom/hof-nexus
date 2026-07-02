@@ -41,22 +41,22 @@ export function PerformanceChart({ period, rows }: { period: Period; rows: Row[]
     <div className="surface-panel p-5 sm:p-7">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div className="text-[11px] font-medium uppercase tracking-wider text-t2">
             Evolução
           </div>
-          <h2 className="mt-1.5 font-display text-xl font-semibold tracking-tight sm:text-2xl">
+          <h2 className="mt-1.5 font-display text-xl font-semibold tracking-tight text-t1 sm:text-2xl">
             Performance — {PERIODS.find((p) => p.id === period)?.label}
           </h2>
         </div>
-        <div className="flex shrink-0 rounded-lg border border-border bg-card p-0.5">
+        <div className="flex shrink-0 rounded-lg border border-glass-border bg-glass-strong p-0.5">
           {(["revenue", "invest", "leads"] as const).map((m) => (
             <button
               key={m}
               onClick={() => setMetric(m)}
               className={`rounded-md px-2.5 py-1.5 text-[11px] font-medium transition sm:px-3 sm:text-xs ${
                 metric === m
-                  ? "bg-background text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[var(--bg)] text-t1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                  : "text-t2 hover:text-t1"
               }`}
             >
               {m === "revenue" ? "Receita" : m === "invest" ? "Invest." : "Leads"}
