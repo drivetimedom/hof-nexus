@@ -101,9 +101,7 @@ function DashboardPage() {
           </div>
         </div>
         {metrics.isLoading ? (
-          <div className="grid h-32 place-items-center">
-            <Loader2 className="size-5 animate-spin text-t2" />
-          </div>
+          <KpiSkeleton />
         ) : hasData ? (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
             {kpis.map((k, idx: number) => (
