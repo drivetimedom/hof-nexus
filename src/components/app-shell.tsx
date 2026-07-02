@@ -193,16 +193,16 @@ export function AppShell({
                 )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="hidden h-9 items-center gap-2.5 rounded-lg border border-border bg-card px-2.5 text-sm transition hover:bg-card/80 sm:flex">
-                      <div className="grid size-6 place-items-center rounded-md bg-[var(--gradient-accent)] text-[10px] font-semibold text-primary-foreground">
+                    <button className="hidden h-9 items-center gap-2.5 rounded-lg border border-glass-border bg-glass px-2.5 text-sm transition hover:bg-glass-strong sm:flex">
+                      <div className="grid size-6 place-items-center rounded-md bg-[var(--gradient-accent)] text-[10px] font-semibold text-[var(--bg)]">
                         {initials}
                       </div>
-                      <span className="max-w-[140px] truncate text-xs text-muted-foreground">{email || "Membro"}</span>
-                      <ChevronDown className="size-3.5 text-muted-foreground" />
+                      <span className="max-w-[140px] truncate text-xs text-t2">{email || "Membro"}</span>
+                      <ChevronDown className="size-3.5 text-t3" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 border-border bg-popover">
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">{email}</DropdownMenuLabel>
+                  <DropdownMenuContent align="end" className="w-56 border-glass-border bg-glass">
+                    <DropdownMenuLabel className="text-xs text-t3">{email}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild className="text-sm">
                       <Link to="/settings/preferences">
