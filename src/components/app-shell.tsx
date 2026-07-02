@@ -160,8 +160,8 @@ export function AppShell({
                 );
               })}
             </nav>
-            <div className="border-t border-border p-3">
-              <button onClick={signOut} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-card hover:text-foreground">
+            <div className="border-t border-glass-border p-3">
+              <button onClick={signOut} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-t2 hover:bg-glass hover:text-t1">
                 <LogOut className="size-4" /> Sair
               </button>
             </div>
