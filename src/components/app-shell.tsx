@@ -150,8 +150,8 @@ export function AppShell({
                     key={item.to}
                     to={item.to}
                     onClick={() => setOpen(false)}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
-                      active ? "bg-card text-foreground" : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-ea ${
+                      active ? "bg-glass-strong text-t1" : "text-t2 hover:bg-glass hover:text-t1"
                     }`}
                   >
                     <item.icon className={`size-4 ${active ? "text-primary" : ""}`} />
