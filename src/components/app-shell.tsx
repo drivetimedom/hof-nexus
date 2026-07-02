@@ -113,16 +113,16 @@ export function AppShell({
             );
           })}
         </nav>
-        <div className="border-t border-border p-3">
-          <div className="surface-glass flex items-center gap-3 rounded-lg p-3">
-            <div className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--gradient-accent)] text-xs font-semibold text-primary-foreground">
+        <div className="border-t border-glass-border p-3">
+          <div className="surface-glass flex items-center gap-3 p-3">
+            <div className="grid size-9 shrink-0 place-items-center rounded-md bg-[var(--gradient-accent)] text-xs font-semibold text-[var(--bg)]">
               {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-xs font-medium">{email || "Membro HOF"}</div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Plano Black</div>
+              <div className="truncate text-xs font-medium text-t1">{email || "Membro HOF"}</div>
+              <div className="text-[10px] uppercase tracking-wider text-t3">Plano Black</div>
             </div>
-            <button onClick={signOut} className="rounded-md p-1.5 text-muted-foreground hover:bg-card hover:text-foreground" title="Sair">
+            <button onClick={signOut} className="rounded-md p-1.5 text-t2 hover:bg-glass hover:text-t1" title="Sair">
               <LogOut className="size-4" />
             </button>
           </div>
