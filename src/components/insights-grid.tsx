@@ -134,14 +134,14 @@ function InsightsHeader({
   return (
     <div className="flex items-center justify-between">
       {formatted && (
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-[11px] text-t2">
           Análise gerada em {formatted}
         </p>
       )}
       <button
         onClick={onRefresh}
         disabled={isFetching}
-        className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:border-white/20 hover:text-foreground disabled:opacity-50"
+        className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-glass-border bg-glass px-3 py-1 text-[11px] font-medium text-t2 transition-ea hover:border-glass-border-hover hover:text-t1 disabled:opacity-50"
       >
         <RefreshCw className={`size-3 ${isFetching ? "animate-spin" : ""}`} />
         Atualizar análise
