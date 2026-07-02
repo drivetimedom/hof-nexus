@@ -59,8 +59,8 @@ export function InsightsGrid({ limit }: { limit?: number }) {
   if (isError || data?.noData || !data?.insights?.length) {
     return (
       <div className="surface-panel p-8 text-center">
-        <Brain className="mx-auto size-8 text-muted-foreground mb-3" />
-        <p className="text-sm text-muted-foreground">
+        <Brain className="mx-auto size-8 text-t2 mb-3" />
+        <p className="text-sm text-t2">
           Ainda não há dados suficientes para gerar insights. Sincronize sua conta Meta Ads e volte
           em breve.
         </p>
