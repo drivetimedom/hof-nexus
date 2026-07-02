@@ -236,3 +236,57 @@ html, body {
   .recharts-wrapper { page-break-inside: avoid; break-inside: avoid; }
 }
 
+/* =========================================================================
+ * Global design system
+ * ========================================================================= */
+
+:root {
+  --orange: #F97316;
+  --orange-d: #EA580C;
+  --og: rgba(249,115,22,0.22);
+  --teal: #14B8A6;
+  --bg: #0C0A08;
+  --glass: rgba(255,255,255,0.04);
+  --glass-strong: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.09);
+  --glass-border-hover: rgba(255,255,255,0.15);
+  --t1: #FFFFFF;
+  --t2: rgba(255,255,255,0.62);
+  --t3: rgba(255,255,255,0.30);
+  --t4: rgba(255,255,255,0.18);
+  --r: 14px;
+  --ea: 180ms cubic-bezier(.4,0,.2,1);
+}
+
+html, body {
+  background: #0C0A08;
+  color: #FFFFFF;
+  font-family: 'Syne', 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 85% -10%, rgba(249,115,22,0.17) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at -10% 90%, rgba(20,184,166,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 35% at 50% 50%, rgba(249,115,22,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+
