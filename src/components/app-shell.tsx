@@ -89,7 +89,7 @@ export function AppShell({
       <div className="hero-glow pointer-events-none fixed inset-x-0 top-0 h-[420px]" />
 
       {/* Sidebar — desktop */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-glass-border bg-[#0C0A08] backdrop-blur-xl lg:flex">
+      <aside data-app-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-glass-border bg-[#0C0A08] backdrop-blur-xl transition-ea lg:flex">
         <div className="flex h-16 items-center gap-3 border-b border-glass-border px-5">
           <BrandMark className="h-11 sm:h-12" />
         </div>
@@ -132,8 +132,9 @@ export function AppShell({
       {/* Mobile drawer */}
       {open && (
         <>
-          <div className="fixed inset-0 z-40 bg-[#0C0A08]/80 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />
-          <aside className="fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col border-r border-glass-border bg-[#0C0A08] lg:hidden">
+          <div className="fixed inset-0 z-40 bg-[#0C0A08]/80 backdrop-blur-sm transition-ea lg:hidden" onClick={() => setOpen(false)} />
+          <aside data-app-shell="mobile-nav" className="fixed inset-y-0 left-0 z-50 flex w-[85vw] max-w-[300px] flex-col border-r border-glass-border bg-[#0C0A08] transition-ea lg:hidden">
+
             <div className="flex h-16 items-center justify-between border-b border-glass-border px-5">
               <div className="flex items-center">
                 <BrandMark className="h-11" />
@@ -172,18 +173,19 @@ export function AppShell({
       {/* Main */}
       <div className="lg:pl-[248px]">
         {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-glass-border bg-[#0C0A08]/70 backdrop-blur-xl">
-          <div className="flex h-16 items-center gap-3 px-4 sm:px-8">
+        <header data-app-shell="header" className="app-header sticky top-0 z-30 border-b border-glass-border bg-[#0C0A08]/80 backdrop-blur-xl transition-ea">
+          <div className="flex h-14 items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-8">
             <button
               onClick={() => setOpen(true)}
-              className="grid size-9 place-items-center rounded-lg border border-glass-border bg-glass text-t2 hover:text-t1 lg:hidden"
+              aria-label="Abrir menu"
+              className="grid size-10 shrink-0 place-items-center rounded-[var(--r)] border border-glass-border bg-glass text-t2 transition-ea hover:border-glass-border-hover hover:text-t1 lg:hidden"
             >
               <Menu className="size-4" />
             </button>
 
-            <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+            <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:gap-3">
               <div className="min-w-0">
-                <h1 className="truncate font-display text-base font-semibold tracking-tight text-t1 sm:text-lg">{title}</h1>
+                <h1 className="truncate font-display text-sm font-semibold tracking-tight text-t1 sm:text-lg">{title}</h1>
                 {subtitle && <p className="hidden truncate text-xs text-t2 sm:block">{subtitle}</p>}
               </div>
 
@@ -193,7 +195,7 @@ export function AppShell({
                 )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="hidden h-9 items-center gap-2.5 rounded-lg border border-glass-border bg-glass px-2.5 text-sm transition hover:bg-glass-strong sm:flex">
+                    <button className="hidden h-9 items-center gap-2.5 rounded-[var(--r)] border border-glass-border bg-glass px-2.5 text-sm transition-ea hover:border-glass-border-hover hover:bg-glass-strong sm:flex">
                       <div className="grid size-6 place-items-center rounded-md bg-[var(--gradient-accent)] text-[10px] font-semibold text-[var(--bg)]">
                         {initials}
                       </div>
@@ -201,7 +203,7 @@ export function AppShell({
                       <ChevronDown className="size-3.5 text-t3" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 border-glass-border bg-glass">
+                  <DropdownMenuContent align="end" className="w-56 border-glass-border bg-[#0C0A08]/95 backdrop-blur-xl">
                     <DropdownMenuLabel className="text-xs text-t3">{email}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild className="text-sm">
@@ -219,7 +221,7 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-8 sm:py-10">{children}</main>
+        <main className="mx-auto w-full max-w-[1400px] px-3 py-5 sm:px-8 sm:py-10">{children}</main>
       </div>
     </div>
   );
@@ -229,12 +231,12 @@ function PeriodSelector({ value, onChange }: { value: Period; onChange: (p: Peri
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="h-9 border-glass-border bg-glass text-xs font-medium text-t2 transition-ea hover:bg-glass-strong hover:text-t1">
+        <Button variant="outline" className="h-9 rounded-[var(--r)] border-glass-border bg-glass px-2.5 text-xs font-medium text-t2 transition-ea hover:border-glass-border-hover hover:bg-glass-strong hover:text-t1 sm:px-3">
           {PERIODS.find((p) => p.id === value)?.label}
           <ChevronDown className="ml-1 size-3.5 text-t3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="border-glass-border bg-glass">
+      <DropdownMenuContent align="end" className="border-glass-border bg-[#0C0A08]/95 backdrop-blur-xl">
         {PERIODS.map((p) => (
           <DropdownMenuItem key={p.id} onClick={() => onChange(p.id)} className="text-sm">
             {p.label}

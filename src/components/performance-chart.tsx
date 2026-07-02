@@ -99,15 +99,18 @@ export function PerformanceChart({ period, rows }: { period: Period; rows: Row[]
                 }
               />
               <Tooltip
-                cursor={{ stroke: "rgba(255,255,255,0.1)", strokeWidth: 1 }}
+                cursor={{ stroke: "var(--glass-border-hover)", strokeWidth: 1 }}
                 contentStyle={{
-                  background: "oklch(0.18 0.005 280 / 0.9)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: 12,
-                  backdropFilter: "blur(12px)",
+                  background: "var(--glass)",
+                  border: "1px solid var(--glass-border)",
+                  borderRadius: "var(--r)",
+                  backdropFilter: "blur(20px) saturate(140%)",
+                  color: "var(--t1)",
                   fontSize: 12,
+                  transition: "var(--ea)",
                 }}
-                labelStyle={{ color: "rgba(255,255,255,0.6)", fontSize: 11 }}
+                itemStyle={{ color: "var(--t1)" }}
+                labelStyle={{ color: "var(--t2)", fontSize: 11 }}
                 formatter={(v: number) => [
                   metric === "leads"
                     ? v.toLocaleString("pt-BR")
