@@ -101,7 +101,7 @@ function DashboardPage() {
         </div>
         {metrics.isLoading ? (
           <div className="grid h-32 place-items-center">
-            <Loader2 className="size-5 animate-spin text-muted-foreground" />
+            <Loader2 className="size-5 animate-spin text-t2" />
           </div>
         ) : hasData ? (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
