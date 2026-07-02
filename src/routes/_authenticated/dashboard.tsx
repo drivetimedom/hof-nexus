@@ -12,6 +12,7 @@ import { getOnboardingStatus, getMyMetrics } from "@/lib/meta.functions";
 import { Link } from "@tanstack/react-router";
 import { Plug, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { KpiSkeleton } from "@/components/skeletons";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
