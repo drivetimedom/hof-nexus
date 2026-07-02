@@ -11,10 +11,10 @@ export function KpiCard({ kpi, sparkline }: { kpi: Kpi; sparkline?: number[] }) 
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div className="text-[11px] font-medium uppercase tracking-wider text-t2">
             {kpi.label}
           </div>
-          <div className="mt-2 font-display text-2xl font-semibold tracking-tight sm:text-[26px]">
+          <div className="mt-2 font-display text-2xl font-semibold tracking-tight text-t1 sm:text-[26px]">
             {kpi.value}
           </div>
         </div>
