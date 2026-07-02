@@ -132,8 +132,9 @@ export function AppShell({
       {/* Mobile drawer */}
       {open && (
         <>
-          <div className="fixed inset-0 z-40 bg-[#0C0A08]/80 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} />
-          <aside className="fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col border-r border-glass-border bg-[#0C0A08] lg:hidden">
+          <div className="fixed inset-0 z-40 bg-[#0C0A08]/80 backdrop-blur-sm transition-ea lg:hidden" onClick={() => setOpen(false)} />
+          <aside data-app-shell="mobile-nav" className="fixed inset-y-0 left-0 z-50 flex w-[85vw] max-w-[300px] flex-col border-r border-glass-border bg-[#0C0A08] transition-ea lg:hidden">
+
             <div className="flex h-16 items-center justify-between border-b border-glass-border px-5">
               <div className="flex items-center">
                 <BrandMark className="h-11" />
