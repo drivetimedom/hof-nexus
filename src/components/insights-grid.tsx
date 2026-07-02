@@ -40,15 +40,15 @@ export function InsightsGrid({ limit }: { limit?: number }) {
             <div key={i} className="surface-panel relative overflow-hidden p-5">
               <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
               <div className="space-y-3">
-                <div className="h-3 w-24 rounded bg-white/10" />
-                <div className="h-4 w-3/4 rounded bg-white/10" />
-                <div className="h-3 w-full rounded bg-white/10" />
-                <div className="h-3 w-5/6 rounded bg-white/10" />
+                <div className="h-3 w-24 rounded bg-t4" />
+                <div className="h-4 w-3/4 rounded bg-t4" />
+                <div className="h-3 w-full rounded bg-t4" />
+                <div className="h-3 w-5/6 rounded bg-t4" />
               </div>
             </div>
           ))}
         </div>
-        <p className="text-center text-xs text-muted-foreground animate-pulse mt-2">
+        <p className="text-center text-xs text-t2 animate-pulse mt-2">
           Analisando sua operação com a metodologia HOF Circle…
         </p>
       </div>
@@ -59,8 +59,8 @@ export function InsightsGrid({ limit }: { limit?: number }) {
   if (isError || data?.noData || !data?.insights?.length) {
     return (
       <div className="surface-panel p-8 text-center">
-        <Brain className="mx-auto size-8 text-muted-foreground mb-3" />
-        <p className="text-sm text-muted-foreground">
+        <Brain className="mx-auto size-8 text-t2 mb-3" />
+        <p className="text-sm text-t2">
           Ainda não há dados suficientes para gerar insights. Sincronize sua conta Meta Ads e volte
           em breve.
         </p>
@@ -84,25 +84,25 @@ export function InsightsGrid({ limit }: { limit?: number }) {
           return (
             <article
               key={i.id}
-              className="surface-panel group relative overflow-hidden p-5 transition hover:border-white/15"
+              className="surface-panel group relative overflow-hidden p-5 hover:border-glass-border-hover"
             >
               <div className="absolute -right-12 -top-12 size-40 rounded-full bg-[var(--gradient-accent)] opacity-[0.06] blur-2xl transition group-hover:opacity-[0.12]" />
               <div className="relative">
                 <div className="flex items-center justify-between">
                   <div
-                    className={`inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${meta.color}`}
+                    className={`inline-flex items-center gap-1.5 rounded-full border border-glass-border bg-glass-strong px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${meta.color}`}
                   >
                     <Icon className="size-3" />
                     {meta.label}
                   </div>
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[10px] uppercase tracking-wider text-t3">
                     Impacto {i.impact}
                   </span>
                 </div>
-                <h3 className="mt-4 font-display text-base font-semibold leading-snug tracking-tight">
+                <h3 className="mt-4 font-display text-base font-semibold leading-snug tracking-tight text-t1">
                   {i.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{i.body}</p>
+                <p className="mt-2 text-sm leading-relaxed text-t2">{i.body}</p>
               </div>
             </article>
           );
@@ -134,14 +134,14 @@ function InsightsHeader({
   return (
     <div className="flex items-center justify-between">
       {formatted && (
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-[11px] text-t2">
           Análise gerada em {formatted}
         </p>
       )}
       <button
         onClick={onRefresh}
         disabled={isFetching}
-        className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:border-white/20 hover:text-foreground disabled:opacity-50"
+        className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-glass-border bg-glass px-3 py-1 text-[11px] font-medium text-t2 transition-ea hover:border-glass-border-hover hover:text-t1 disabled:opacity-50"
       >
         <RefreshCw className={`size-3 ${isFetching ? "animate-spin" : ""}`} />
         Atualizar análise

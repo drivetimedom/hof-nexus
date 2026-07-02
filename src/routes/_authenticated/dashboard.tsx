@@ -44,7 +44,7 @@ function DashboardPage() {
     return (
       <AppShell title="Centro de decisão">
         <div className="grid h-[60vh] place-items-center">
-          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+          <Loader2 className="size-6 animate-spin text-t2" />
         </div>
       </AppShell>
     );
@@ -91,17 +91,17 @@ function DashboardPage() {
       <section>
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="text-[11px] font-medium uppercase tracking-wider text-t2">
               Indicadores
             </div>
-            <h2 className="mt-1 font-display text-xl font-semibold tracking-tight sm:text-2xl">
+            <h2 className="mt-1 font-display text-xl font-semibold tracking-tight text-t1 sm:text-2xl">
               Sinais vitais da operação
             </h2>
           </div>
         </div>
         {metrics.isLoading ? (
           <div className="grid h-32 place-items-center">
-            <Loader2 className="size-5 animate-spin text-muted-foreground" />
+            <Loader2 className="size-5 animate-spin text-t2" />
           </div>
         ) : hasData ? (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
@@ -115,7 +115,7 @@ function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="surface-panel p-8 text-sm text-muted-foreground">
+          <div className="surface-panel p-8 text-sm text-t2">
             Ainda não há métricas sincronizadas para o período. Use “Sincronizar agora” em
             Configurações → Meta Ads para coletar os dados da conta conectada.
           </div>
@@ -133,10 +133,10 @@ function DashboardPage() {
       <section className="mt-10">
         <div className="mb-5 flex items-end justify-between gap-4">
           <div>
-            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="text-[11px] font-medium uppercase tracking-wider text-t2">
               Insights Estratégicos
             </div>
-            <h2 className="mt-1 font-display text-xl font-semibold tracking-tight sm:text-2xl">
+            <h2 className="mt-1 font-display text-xl font-semibold tracking-tight text-t1 sm:text-2xl">
               O que está movendo seu crescimento
             </h2>
           </div>
@@ -162,10 +162,10 @@ function EmptyState({
     <div className="mx-auto mt-12 grid max-w-2xl place-items-center text-center">
       <div className="surface-panel w-full p-10">
         <div className="mx-auto grid size-14 place-items-center rounded-xl bg-[var(--gradient-accent)]">
-          <Plug className="size-6 text-primary-foreground" />
+          <Plug className="size-6 text-[var(--bg)]" />
         </div>
-        <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight">{title}</h2>
-        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{description}</p>
+        <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight text-t1">{title}</h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-t2">{description}</p>
         <Link to={to} className="mt-6 inline-block">
           <Button className="h-11 px-6">{cta}</Button>
         </Link>

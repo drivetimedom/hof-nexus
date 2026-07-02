@@ -37,27 +37,27 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
 
   return (
     <div className="surface-panel overflow-hidden">
-      <div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-7">
+      <div className="flex items-center justify-between border-b border-glass-border px-5 py-4 sm:px-7">
         <div>
-          <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Campanhas</div>
-          <h3 className="mt-1 font-display text-lg font-semibold tracking-tight">Operação ativa</h3>
+          <div className="text-[11px] font-medium uppercase tracking-wider text-t2">Campanhas</div>
+          <h3 className="mt-1 font-display text-lg font-semibold tracking-tight text-t1">Operação ativa</h3>
         </div>
-        <span className="text-xs text-muted-foreground">
+        <span className="text-xs text-t2">
           {query.isLoading ? "carregando…" : `${all.length} campanhas`}
         </span>
       </div>
 
       {query.isLoading ? (
         <div className="grid place-items-center px-7 py-16">
-          <Loader2 className="size-5 animate-spin text-muted-foreground" />
+          <Loader2 className="size-5 animate-spin text-t2" />
         </div>
       ) : query.isError ? (
-        <div className="px-7 py-10 text-sm text-muted-foreground">
+        <div className="px-7 py-10 text-sm text-t2">
           Não foi possível carregar as campanhas da Meta.
           <div className="mt-1 text-xs text-rose-400">{(query.error as Error).message}</div>
         </div>
       ) : data.length === 0 ? (
-        <div className="px-7 py-10 text-sm text-muted-foreground">
+        <div className="px-7 py-10 text-sm text-t2">
           Nenhuma campanha encontrada na conta selecionada para o período.
         </div>
       ) : (
@@ -66,7 +66,7 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
           <div className="hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border text-left text-[11px] uppercase tracking-wider text-muted-foreground">
+                <tr className="border-b border-glass-border text-left text-[11px] uppercase tracking-wider text-t2">
                   <th className="px-7 py-3 font-medium">Campanha</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 text-right font-medium">Invest.</th>
@@ -85,10 +85,10 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
                 {data.map((c) => {
                   const s = STATUS_STYLES[c.status as CampaignStatus];
                   return (
-                    <tr key={c.id} className="border-b border-border/60 transition last:border-0 hover:bg-card/40">
+                    <tr key={c.id} className="border-b border-glass-border/60 transition last:border-0 hover:bg-glass-strong">
                       <td className="px-7 py-4">
-                        <div className="font-medium">{c.name}</div>
-                        <div className="mt-0.5 text-[11px] text-muted-foreground">Meta Ads</div>
+                        <div className="font-medium text-t1">{c.name}</div>
+                        <div className="mt-0.5 text-[11px] text-t3">Meta Ads</div>
                       </td>
                       <td className="px-4 py-4">
                         <span className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-medium ${s.pill}`}>
@@ -96,17 +96,17 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
                           {STATUS_LABEL[c.status as CampaignStatus]}
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-right tabular-nums">{fmtBRL(c.spend)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtInt(c.impressions)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtInt(c.reach)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtInt(c.clicks)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{c.ctr.toFixed(2)}%</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtBRL2(c.cpc)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums">{fmtInt(c.leads)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtBRL2(c.cpl)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums">{fmtInt(c.purchases)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t1">{fmtBRL(c.spend)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtInt(c.impressions)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtInt(c.reach)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtInt(c.clicks)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{c.ctr.toFixed(2)}%</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtBRL2(c.cpc)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t1">{fmtInt(c.leads)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtBRL2(c.cpl)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t1">{fmtInt(c.purchases)}</td>
                       <td className="px-7 py-4 text-right">
-                        <span className={`font-semibold tabular-nums ${c.roas >= 8 ? "text-emerald-400" : c.roas >= 4 ? "text-foreground" : "text-rose-400"}`}>
+                        <span className={`font-semibold tabular-nums ${c.roas >= 8 ? "text-emerald-400" : c.roas >= 4 ? "text-t1" : "text-rose-400"}`}>
                           {c.roas.toFixed(2)}x
                         </span>
                       </td>
@@ -118,15 +118,15 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
           </div>
 
           {/* Mobile cards */}
-          <div className="divide-y divide-border md:hidden">
+          <div className="divide-y divide-glass-border md:hidden">
             {data.map((c) => {
               const s = STATUS_STYLES[c.status as CampaignStatus];
               return (
                 <div key={c.id} className="p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="truncate font-medium">{c.name}</div>
-                      <div className="mt-0.5 text-[11px] text-muted-foreground">Meta Ads</div>
+                      <div className="truncate font-medium text-t1">{c.name}</div>
+                      <div className="mt-0.5 text-[11px] text-t3">Meta Ads</div>
                     </div>
                     <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-medium ${s.pill}`}>
                       <span className={`size-1.5 rounded-full ${s.dot}`} />
@@ -157,8 +157,8 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
 function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className={`mt-0.5 tabular-nums ${accent ? "font-semibold text-emerald-400" : ""}`}>{value}</div>
+      <div className="text-[10px] uppercase tracking-wider text-t2">{label}</div>
+      <div className={`mt-0.5 tabular-nums ${accent ? "font-semibold text-emerald-400" : "text-t1"}`}>{value}</div>
     </div>
   );
 }

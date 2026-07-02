@@ -7,14 +7,14 @@ export function KpiCard({ kpi, sparkline }: { kpi: Kpi; sparkline?: number[] }) 
   const positive = isCpl ? kpi.delta < 0 : kpi.delta > 0;
 
   return (
-    <div className="surface-panel group relative overflow-hidden p-5 transition hover:border-white/15">
+    <div className="surface-panel group relative overflow-hidden p-5 hover:border-glass-border-hover">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div className="text-[11px] font-medium uppercase tracking-wider text-t2">
             {kpi.label}
           </div>
-          <div className="mt-2 font-display text-2xl font-semibold tracking-tight sm:text-[26px]">
+          <div className="mt-2 font-display text-2xl font-semibold tracking-tight text-t1 sm:text-[26px]">
             {kpi.value}
           </div>
         </div>
@@ -32,7 +32,7 @@ export function KpiCard({ kpi, sparkline }: { kpi: Kpi; sparkline?: number[] }) 
 
       {sparkline && <MiniSpark values={sparkline} positive={positive} />}
 
-      <div className="mt-3 text-[11px] text-muted-foreground">{kpi.hint}</div>
+      <div className="mt-3 text-[11px] text-t3">{kpi.hint}</div>
     </div>
   );
 }
