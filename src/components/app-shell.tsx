@@ -229,9 +229,9 @@ function PeriodSelector({ value, onChange }: { value: Period; onChange: (p: Peri
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="h-9 border-border bg-card text-xs font-medium hover:bg-card/80">
+        <Button variant="outline" className="h-9 border-glass-border bg-glass text-xs font-medium text-t2 transition-ea hover:bg-glass-strong hover:text-t1">
           {PERIODS.find((p) => p.id === value)?.label}
-          <ChevronDown className="ml-1 size-3.5 text-muted-foreground" />
+          <ChevronDown className="ml-1 size-3.5 text-t3" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="border-border bg-popover">
