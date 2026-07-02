@@ -100,10 +100,10 @@ export function AppShell({
               <Link
                 key={item.to}
                 to={item.to}
-                className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+                className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-ea ${
                   active
-                    ? "bg-card text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
-                    : "text-muted-foreground hover:bg-card/60 hover:text-foreground"
+                    ? "bg-glass-strong text-t1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+                    : "text-t2 hover:bg-glass hover:text-t1"
                 }`}
               >
                 <item.icon className={`size-4 ${active ? "text-primary" : ""}`} />
