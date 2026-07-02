@@ -37,13 +37,17 @@ export function InsightsGrid({ limit }: { limit?: number }) {
         <InsightsHeader generatedAt={null} isFetching={false} onRefresh={handleRefresh} />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="surface-panel relative overflow-hidden p-5">
+            <div
+              key={i}
+              className="surface-panel relative overflow-hidden p-5 transition-ea"
+              style={{ background: "var(--glass)", borderColor: "var(--glass-border)" }}
+            >
               <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
               <div className="space-y-3">
-                <div className="h-3 w-24 rounded bg-t4" />
-                <div className="h-4 w-3/4 rounded bg-t4" />
-                <div className="h-3 w-full rounded bg-t4" />
-                <div className="h-3 w-5/6 rounded bg-t4" />
+                <div className="h-3 w-24 rounded animate-pulse" style={{ background: "var(--glass-strong)" }} />
+                <div className="h-4 w-3/4 rounded animate-pulse" style={{ background: "var(--glass-strong)" }} />
+                <div className="h-3 w-full rounded animate-pulse" style={{ background: "var(--glass-strong)" }} />
+                <div className="h-3 w-5/6 rounded animate-pulse" style={{ background: "var(--glass-strong)" }} />
               </div>
             </div>
           ))}
