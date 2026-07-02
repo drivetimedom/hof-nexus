@@ -66,7 +66,7 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
           <div className="hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border text-left text-[11px] uppercase tracking-wider text-muted-foreground">
+                <tr className="border-b border-glass-border text-left text-[11px] uppercase tracking-wider text-t2">
                   <th className="px-7 py-3 font-medium">Campanha</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 text-right font-medium">Invest.</th>
@@ -85,10 +85,10 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
                 {data.map((c) => {
                   const s = STATUS_STYLES[c.status as CampaignStatus];
                   return (
-                    <tr key={c.id} className="border-b border-border/60 transition last:border-0 hover:bg-card/40">
+                    <tr key={c.id} className="border-b border-glass-border/60 transition last:border-0 hover:bg-glass-strong">
                       <td className="px-7 py-4">
-                        <div className="font-medium">{c.name}</div>
-                        <div className="mt-0.5 text-[11px] text-muted-foreground">Meta Ads</div>
+                        <div className="font-medium text-t1">{c.name}</div>
+                        <div className="mt-0.5 text-[11px] text-t3">Meta Ads</div>
                       </td>
                       <td className="px-4 py-4">
                         <span className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-medium ${s.pill}`}>
@@ -96,17 +96,17 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
                           {STATUS_LABEL[c.status as CampaignStatus]}
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-right tabular-nums">{fmtBRL(c.spend)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtInt(c.impressions)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtInt(c.reach)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtInt(c.clicks)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{c.ctr.toFixed(2)}%</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtBRL2(c.cpc)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums">{fmtInt(c.leads)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums text-muted-foreground">{fmtBRL2(c.cpl)}</td>
-                      <td className="px-4 py-4 text-right tabular-nums">{fmtInt(c.purchases)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t1">{fmtBRL(c.spend)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtInt(c.impressions)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtInt(c.reach)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtInt(c.clicks)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{c.ctr.toFixed(2)}%</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtBRL2(c.cpc)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t1">{fmtInt(c.leads)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtBRL2(c.cpl)}</td>
+                      <td className="px-4 py-4 text-right tabular-nums text-t1">{fmtInt(c.purchases)}</td>
                       <td className="px-7 py-4 text-right">
-                        <span className={`font-semibold tabular-nums ${c.roas >= 8 ? "text-emerald-400" : c.roas >= 4 ? "text-foreground" : "text-rose-400"}`}>
+                        <span className={`font-semibold tabular-nums ${c.roas >= 8 ? "text-emerald-400" : c.roas >= 4 ? "text-t1" : "text-rose-400"}`}>
                           {c.roas.toFixed(2)}x
                         </span>
                       </td>
