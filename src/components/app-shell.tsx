@@ -172,19 +172,19 @@ export function AppShell({
       {/* Main */}
       <div className="lg:pl-[248px]">
         {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-border bg-background/70 backdrop-blur-xl">
+        <header className="sticky top-0 z-30 border-b border-glass-border bg-[#0C0A08]/70 backdrop-blur-xl">
           <div className="flex h-16 items-center gap-3 px-4 sm:px-8">
             <button
               onClick={() => setOpen(true)}
-              className="grid size-9 place-items-center rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground lg:hidden"
+              className="grid size-9 place-items-center rounded-lg border border-glass-border bg-glass text-t2 hover:text-t1 lg:hidden"
             >
               <Menu className="size-4" />
             </button>
 
             <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
               <div className="min-w-0">
-                <h1 className="truncate font-display text-base font-semibold tracking-tight sm:text-lg">{title}</h1>
-                {subtitle && <p className="hidden truncate text-xs text-muted-foreground sm:block">{subtitle}</p>}
+                <h1 className="truncate font-display text-base font-semibold tracking-tight text-t1 sm:text-lg">{title}</h1>
+                {subtitle && <p className="hidden truncate text-xs text-t2 sm:block">{subtitle}</p>}
               </div>
 
               <div className="flex shrink-0 items-center gap-2">
