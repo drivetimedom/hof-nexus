@@ -118,15 +118,15 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
           </div>
 
           {/* Mobile cards */}
-          <div className="divide-y divide-border md:hidden">
+          <div className="divide-y divide-glass-border md:hidden">
             {data.map((c) => {
               const s = STATUS_STYLES[c.status as CampaignStatus];
               return (
                 <div key={c.id} className="p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="truncate font-medium">{c.name}</div>
-                      <div className="mt-0.5 text-[11px] text-muted-foreground">Meta Ads</div>
+                      <div className="truncate font-medium text-t1">{c.name}</div>
+                      <div className="mt-0.5 text-[11px] text-t3">Meta Ads</div>
                     </div>
                     <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-medium ${s.pill}`}>
                       <span className={`size-1.5 rounded-full ${s.dot}`} />
@@ -157,8 +157,8 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
 function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className={`mt-0.5 tabular-nums ${accent ? "font-semibold text-emerald-400" : ""}`}>{value}</div>
+      <div className="text-[10px] uppercase tracking-wider text-t2">{label}</div>
+      <div className={`mt-0.5 tabular-nums ${accent ? "font-semibold text-emerald-400" : "text-t1"}`}>{value}</div>
     </div>
   );
 }
