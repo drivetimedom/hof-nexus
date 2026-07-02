@@ -40,15 +40,15 @@ export function InsightsGrid({ limit }: { limit?: number }) {
             <div key={i} className="surface-panel relative overflow-hidden p-5">
               <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
               <div className="space-y-3">
-                <div className="h-3 w-24 rounded bg-white/10" />
-                <div className="h-4 w-3/4 rounded bg-white/10" />
-                <div className="h-3 w-full rounded bg-white/10" />
-                <div className="h-3 w-5/6 rounded bg-white/10" />
+                <div className="h-3 w-24 rounded bg-t4" />
+                <div className="h-4 w-3/4 rounded bg-t4" />
+                <div className="h-3 w-full rounded bg-t4" />
+                <div className="h-3 w-5/6 rounded bg-t4" />
               </div>
             </div>
           ))}
         </div>
-        <p className="text-center text-xs text-muted-foreground animate-pulse mt-2">
+        <p className="text-center text-xs text-t2 animate-pulse mt-2">
           Analisando sua operação com a metodologia HOF Circle…
         </p>
       </div>
