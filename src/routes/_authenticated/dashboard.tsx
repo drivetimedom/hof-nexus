@@ -91,10 +91,10 @@ function DashboardPage() {
       <section>
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="text-[11px] font-medium uppercase tracking-wider text-t2">
               Indicadores
             </div>
-            <h2 className="mt-1 font-display text-xl font-semibold tracking-tight sm:text-2xl">
+            <h2 className="mt-1 font-display text-xl font-semibold tracking-tight text-t1 sm:text-2xl">
               Sinais vitais da operação
             </h2>
           </div>
