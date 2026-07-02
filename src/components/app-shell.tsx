@@ -85,12 +85,12 @@ export function AppShell({
   const initials = email ? email.slice(0, 2).toUpperCase() : "HC";
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground">
+    <div className="relative min-h-screen bg-[#0C0A08] text-t1">
       <div className="hero-glow pointer-events-none fixed inset-x-0 top-0 h-[420px]" />
 
       {/* Sidebar — desktop */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-border bg-sidebar/80 backdrop-blur-xl lg:flex">
-        <div className="flex h-16 items-center gap-3 border-b border-border px-5">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-glass-border bg-[#0C0A08] backdrop-blur-xl lg:flex">
+        <div className="flex h-16 items-center gap-3 border-b border-glass-border px-5">
           <BrandMark className="h-11 sm:h-12" />
         </div>
         <nav className="flex-1 space-y-0.5 p-3">
