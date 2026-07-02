@@ -89,7 +89,7 @@ export function AppShell({
       <div className="hero-glow pointer-events-none fixed inset-x-0 top-0 h-[420px]" />
 
       {/* Sidebar — desktop */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-glass-border bg-[#0C0A08] backdrop-blur-xl lg:flex">
+      <aside data-app-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-glass-border bg-[#0C0A08] backdrop-blur-xl transition-ea lg:flex">
         <div className="flex h-16 items-center gap-3 border-b border-glass-border px-5">
           <BrandMark className="h-11 sm:h-12" />
         </div>
