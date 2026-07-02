@@ -67,7 +67,7 @@ export function PerformanceChart({ period, rows }: { period: Period; rows: Row[]
 
       <div className="mt-6 h-[280px] w-full sm:h-[340px]">
         {data.length === 0 ? (
-          <div className="grid h-full place-items-center text-sm text-muted-foreground">
+          <div className="grid h-full place-items-center text-sm text-t2">
             Sem dados sincronizados para o período.
           </div>
         ) : (
