@@ -133,10 +133,10 @@ function DashboardPage() {
       <section className="mt-10">
         <div className="mb-5 flex items-end justify-between gap-4">
           <div>
-            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="text-[11px] font-medium uppercase tracking-wider text-t2">
               Insights Estratégicos
             </div>
-            <h2 className="mt-1 font-display text-xl font-semibold tracking-tight sm:text-2xl">
+            <h2 className="mt-1 font-display text-xl font-semibold tracking-tight text-t1 sm:text-2xl">
               O que está movendo seu crescimento
             </h2>
           </div>
