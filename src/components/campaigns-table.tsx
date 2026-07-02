@@ -37,27 +37,27 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
 
   return (
     <div className="surface-panel overflow-hidden">
-      <div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-7">
+      <div className="flex items-center justify-between border-b border-glass-border px-5 py-4 sm:px-7">
         <div>
-          <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Campanhas</div>
-          <h3 className="mt-1 font-display text-lg font-semibold tracking-tight">Operação ativa</h3>
+          <div className="text-[11px] font-medium uppercase tracking-wider text-t2">Campanhas</div>
+          <h3 className="mt-1 font-display text-lg font-semibold tracking-tight text-t1">Operação ativa</h3>
         </div>
-        <span className="text-xs text-muted-foreground">
+        <span className="text-xs text-t2">
           {query.isLoading ? "carregando…" : `${all.length} campanhas`}
         </span>
       </div>
 
       {query.isLoading ? (
         <div className="grid place-items-center px-7 py-16">
-          <Loader2 className="size-5 animate-spin text-muted-foreground" />
+          <Loader2 className="size-5 animate-spin text-t2" />
         </div>
       ) : query.isError ? (
-        <div className="px-7 py-10 text-sm text-muted-foreground">
+        <div className="px-7 py-10 text-sm text-t2">
           Não foi possível carregar as campanhas da Meta.
           <div className="mt-1 text-xs text-rose-400">{(query.error as Error).message}</div>
         </div>
       ) : data.length === 0 ? (
-        <div className="px-7 py-10 text-sm text-muted-foreground">
+        <div className="px-7 py-10 text-sm text-t2">
           Nenhuma campanha encontrada na conta selecionada para o período.
         </div>
       ) : (
