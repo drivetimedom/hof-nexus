@@ -48,9 +48,7 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
       </div>
 
       {query.isLoading ? (
-        <div className="grid place-items-center px-7 py-16">
-          <Loader2 className="size-5 animate-spin text-t2" />
-        </div>
+        <TableSkeleton rows={limit ?? 5} />
       ) : query.isError ? (
         <div className="px-7 py-10 text-sm text-t2">
           Não foi possível carregar as campanhas da Meta.
