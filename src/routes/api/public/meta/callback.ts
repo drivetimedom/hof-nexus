@@ -8,14 +8,43 @@ export const Route = createFileRoute("/api/public/meta/callback")({
         const code = url.searchParams.get("code");
         const state = url.searchParams.get("state");
         const errorParam = url.searchParams.get("error");
+        const errorReason = url.searchParams.get("error_reason");
+        const errorDescription = url.searchParams.get("error_description");
         const origin = `${url.protocol}//${url.host}`;
+        const allParams = Object.fromEntries(url.searchParams.entries());
+
+        console.log("[meta/callback] incoming", {
+          origin,
+          host: request.headers.get("host"),
+          xForwardedHost: request.headers.get("x-forwarded-host"),
+          referer: request.headers.get("referer"),
+          hasCode: !!code,
+          codePrefix: code ? code.slice(0, 8) : null,
+          state,
+          error: errorParam,
+          errorReason,
+          errorDescription,
+          allParams,
+        });
 
         function back(qs: string) {
           return Response.redirect(`${origin}/onboarding?${qs}`, 302);
         }
 
-        if (errorParam) return back(`meta_error=${encodeURIComponent(errorParam)}`);
-        if (!code || !state) return back("meta_error=missing_params");
+        if (errorParam) {
+          console.error("[meta/callback] Meta returned error", {
+            error: errorParam,
+            errorReason,
+            errorDescription,
+            state,
+          });
+          const detail = errorDescription || errorReason || errorParam;
+          return back(`meta_error=${encodeURIComponent(detail)}`);
+        }
+        if (!code || !state) {
+          console.error("[meta/callback] missing params", { hasCode: !!code, hasState: !!state });
+          return back("meta_error=missing_params");
+        }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const {
