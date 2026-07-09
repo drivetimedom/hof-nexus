@@ -106,10 +106,13 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
                       <td className="px-4 py-4 text-right tabular-nums text-t1">{fmtInt(c.leads)}</td>
                       <td className="px-4 py-4 text-right tabular-nums text-t2">{fmtBRL2(c.cpl)}</td>
                       <td className="px-4 py-4 text-right tabular-nums text-t1">{fmtInt(c.purchases)}</td>
-                      <td className="px-7 py-4 text-right">
+                      <td className="px-4 py-4 text-right">
                         <span className={`font-semibold tabular-nums ${c.roas >= 8 ? "text-emerald-400" : c.roas >= 4 ? "text-t1" : "text-rose-400"}`}>
                           {c.roas.toFixed(2)}x
                         </span>
+                      </td>
+                      <td className="px-4 py-4 text-right">
+                        <CampaignActions campaign={{ id: c.id, name: c.name, status: c.status }} />
                       </td>
                     </tr>
                   );
