@@ -132,10 +132,13 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
                       <div className="truncate font-medium text-t1">{c.name}</div>
                       <div className="mt-0.5 text-[11px] text-t3">Meta Ads</div>
                     </div>
-                    <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-medium ${s.pill}`}>
-                      <span className={`size-1.5 rounded-full ${s.dot}`} />
-                      {STATUS_LABEL[c.status as CampaignStatus]}
-                    </span>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-medium ${s.pill}`}>
+                        <span className={`size-1.5 rounded-full ${s.dot}`} />
+                        {STATUS_LABEL[c.status as CampaignStatus]}
+                      </span>
+                      <CampaignActions campaign={{ id: c.id, name: c.name, status: c.status }} />
+                    </div>
                   </div>
                   <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
                     <Stat label="Invest." value={fmtBRL(c.spend)} />
