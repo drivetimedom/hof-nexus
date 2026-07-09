@@ -262,3 +262,134 @@ export const getMyCampaigns = createServerFn({ method: "GET" })
     campaigns.sort((a, b) => b.spend - a.spend);
     return { campaigns };
   });
+
+async function getUserMetaConn(userId: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("meta_connections")
+    .select("access_token,ad_account_id,token_expires_at")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Conecte sua conta Meta primeiro.");
+  if (!data.ad_account_id) throw new Error("Selecione uma conta de anúncios.");
+  if (data.token_expires_at && new Date(data.token_expires_at).getTime() < Date.now()) {
+    throw new Error("Sua conexão com o Meta Ads expirou. Reconecte em Configurações → Integrações.");
+  }
+  return data;
+}
+
+async function metaWrite(path: string, accessToken: string, body: Record<string, string>) {
+  const params = new URLSearchParams({ ...body, access_token: accessToken });
+  const res = await fetch(`https://graph.facebook.com/v20.0${path}`, {
+    method: "POST",
+    body: params,
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    let msg = text;
+    try {
+      const j = JSON.parse(text) as { error?: { message?: string; code?: number } };
+      msg = j.error?.message ?? text;
+      if (j.error?.code === 190) {
+        throw new Error("Sua conexão com o Meta Ads expirou. Reconecte em Configurações → Integrações.");
+      }
+    } catch (e) {
+      if (e instanceof Error && e.message.includes("Reconecte")) throw e;
+    }
+    throw new Error(`Meta: ${msg}`);
+  }
+  return text ? JSON.parse(text) : {};
+}
+
+export const updateCampaignStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { campaignId: string; status: "ACTIVE" | "PAUSED" }) => {
+    if (!d?.campaignId) throw new Error("campaignId obrigatório");
+    if (d.status !== "ACTIVE" && d.status !== "PAUSED") throw new Error("status inválido");
+    return d;
+  })
+  .handler(async ({ context, data }) => {
+    const conn = await getUserMetaConn(context.userId);
+    await metaWrite(`/${data.campaignId}`, conn.access_token, { status: data.status });
+    return { ok: true };
+  });
+
+export const getCampaignDetails = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { campaignId: string }) => {
+    if (!d?.campaignId) throw new Error("campaignId obrigatório");
+    return d;
+  })
+  .handler(async ({ context, data }) => {
+    const conn = await getUserMetaConn(context.userId);
+    const params = new URLSearchParams({
+      fields: "id,name,objective,daily_budget,lifetime_budget,start_time,stop_time,status",
+      access_token: conn.access_token,
+    });
+    const res = await fetch(`https://graph.facebook.com/v20.0/${data.campaignId}?${params}`);
+    const json = (await res.json()) as {
+      id: string;
+      name: string;
+      objective?: string;
+      daily_budget?: string;
+      lifetime_budget?: string;
+      start_time?: string;
+      stop_time?: string;
+      status?: string;
+      error?: { message: string };
+    };
+    if (!res.ok) throw new Error(`Meta: ${json.error?.message ?? "erro ao carregar campanha"}`);
+    return {
+      id: json.id,
+      name: json.name,
+      objective: json.objective ?? null,
+      dailyBudget: json.daily_budget ? Number(json.daily_budget) / 100 : null,
+      startTime: json.start_time ?? null,
+      stopTime: json.stop_time ?? null,
+      status: json.status ?? null,
+    };
+  });
+
+export const updateCampaign = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (d: {
+      campaignId: string;
+      name?: string;
+      dailyBudget?: number | null;
+      startTime?: string | null;
+      stopTime?: string | null;
+    }) => {
+      if (!d?.campaignId) throw new Error("campaignId obrigatório");
+      return d;
+    }
+  )
+  .handler(async ({ context, data }) => {
+    const conn = await getUserMetaConn(context.userId);
+    const body: Record<string, string> = {};
+    if (data.name && data.name.trim()) body.name = data.name.trim();
+    if (typeof data.dailyBudget === "number" && data.dailyBudget > 0) {
+      body.daily_budget = String(Math.round(data.dailyBudget * 100));
+    }
+    if (data.startTime) body.start_time = new Date(data.startTime).toISOString();
+    if (data.stopTime) body.stop_time = new Date(data.stopTime).toISOString();
+    if (Object.keys(body).length === 0) return { ok: true, noop: true };
+    await metaWrite(`/${data.campaignId}`, conn.access_token, body);
+    return { ok: true };
+  });
+
+export const duplicateCampaign = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { campaignId: string }) => {
+    if (!d?.campaignId) throw new Error("campaignId obrigatório");
+    return d;
+  })
+  .handler(async ({ context, data }) => {
+    const conn = await getUserMetaConn(context.userId);
+    const result = (await metaWrite(`/${data.campaignId}/copies`, conn.access_token, {
+      deep_copy: "true",
+      status_option: "PAUSED",
+    })) as { copied_campaign_id?: string; ad_object_ids?: unknown };
+    return { ok: true, newCampaignId: result.copied_campaign_id ?? null };
+  });
