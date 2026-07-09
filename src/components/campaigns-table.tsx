@@ -2,6 +2,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getMyCampaigns } from "@/lib/meta.functions";
 import { TableSkeleton } from "@/components/skeletons";
+import { CampaignActions } from "@/components/campaign-actions";
 
 type CampaignStatus = "excelente" | "atencao" | "critico" | "pausada";
 
