@@ -77,8 +77,10 @@ export function CampaignsTable({ limit, days = 30 }: { limit?: number; days?: nu
                   <th className="px-4 py-3 text-right font-medium">Leads</th>
                   <th className="px-4 py-3 text-right font-medium">CPL</th>
                   <th className="px-4 py-3 text-right font-medium">Conv.</th>
-                  <th className="px-7 py-3 text-right font-medium">ROAS</th>
+                  <th className="px-4 py-3 text-right font-medium">ROAS</th>
+                  <th className="px-7 py-3 text-right font-medium sr-only">Ações</th>
                 </tr>
+
               </thead>
               <tbody>
                 {data.map((c) => {
