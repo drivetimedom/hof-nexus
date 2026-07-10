@@ -9,8 +9,9 @@ import {
   disconnectMeta,
   selectAdAccount,
   syncMyMetrics,
+  refreshAdAccounts,
 } from "@/lib/meta.functions";
-import { CheckCircle2, Loader2, RefreshCw, Unplug, Plug, RotateCcw } from "lucide-react";
+import { CheckCircle2, Loader2, RefreshCw, Unplug, Plug, RotateCcw, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
