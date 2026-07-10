@@ -90,7 +90,7 @@ export const refreshAdAccounts = createServerFn({ method: "POST" })
     const { fetchAdAccounts } = await import("@/lib/meta.server");
     const { data: conn, error } = await supabaseAdmin
       .from("meta_connections")
-      .select("access_token")
+      .select("access_token,ad_account_id")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -102,12 +102,45 @@ export const refreshAdAccounts = createServerFn({ method: "POST" })
       name: a.name,
       currency: a.currency,
     }));
-    await supabaseAdmin
-      .from("meta_connections")
-      .update({ available_accounts: safe })
-      .eq("user_id", userId);
-    return { accounts: safe };
+    const stillAvailable =
+      !conn.ad_account_id || safe.some((a) => a.id === conn.ad_account_id);
+    const update: Record<string, unknown> = { available_accounts: safe };
+    if (!stillAvailable) {
+      update.ad_account_id = null;
+      update.account_name = null;
+    }
+    await supabaseAdmin.from("meta_connections").update(update).eq("user_id", userId);
+    return { accounts: safe, currentStillAvailable: stillAvailable };
   });
+
+async function clearSelectedAccount(userId: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  await supabaseAdmin
+    .from("meta_connections")
+    .update({ ad_account_id: null, account_name: null })
+    .eq("user_id", userId);
+}
+
+function isMetaAccountError(message: string) {
+  return /does not exist|Unsupported get request|Object with ID|Cannot access|permission|\(#100\)|\(#803\)|\(#200\)/i.test(
+    message
+  );
+}
+
+async function withAccountGuard<T>(userId: string, fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (isMetaAccountError(msg)) {
+      await clearSelectedAccount(userId);
+      throw new Error(
+        "A conta de anúncios selecionada não está mais disponível na Meta. Escolha outra conta em Configurações → Integrações."
+      );
+    }
+    throw e;
+  }
+}
 
 export const selectAdAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
