@@ -77,6 +77,19 @@ function IntegrationsPage() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+  const refreshAccounts = useServerFn(refreshAdAccounts);
+  const refresh = useMutation({
+    mutationFn: async () => refreshAccounts(),
+    onSuccess: ({ currentStillAvailable }) => {
+      qc.invalidateQueries({ queryKey: ["onboarding-status"] });
+      if (currentStillAvailable) toast.success("Lista de contas atualizada.");
+      else
+        toast.error(
+          "A conta anteriormente selecionada não existe mais. Escolha outra abaixo."
+        );
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const meta = status.data?.meta;
   const connected = !!meta?.connected;
@@ -84,9 +97,11 @@ function IntegrationsPage() {
   const accountName = meta && "accountName" in meta ? meta.accountName ?? null : null;
   const lastSyncedAt = meta && "lastSyncedAt" in meta ? meta.lastSyncedAt ?? null : null;
   const accounts = meta && "availableAccounts" in meta ? meta.availableAccounts ?? [] : [];
+  const accountUnavailable =
+    meta && "accountUnavailable" in meta ? !!meta.accountUnavailable : false;
 
-  // Se conectado sem conta escolhida, força modo de seleção.
-  const mustPick = connected && !adAccountId;
+  // Se conectado sem conta escolhida (ou conta indisponível), força modo de seleção.
+  const mustPick = connected && (!adAccountId || accountUnavailable);
   const showAccountList = switching || mustPick;
 
   return (
