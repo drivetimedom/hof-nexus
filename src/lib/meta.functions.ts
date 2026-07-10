@@ -104,7 +104,11 @@ export const refreshAdAccounts = createServerFn({ method: "POST" })
     }));
     const stillAvailable =
       !conn.ad_account_id || safe.some((a) => a.id === conn.ad_account_id);
-    const update: Record<string, unknown> = { available_accounts: safe };
+    const update: {
+      available_accounts: typeof safe;
+      ad_account_id?: string | null;
+      account_name?: string | null;
+    } = { available_accounts: safe };
     if (!stillAvailable) {
       update.ad_account_id = null;
       update.account_name = null;
