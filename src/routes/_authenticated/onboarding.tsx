@@ -62,14 +62,16 @@ function OnboardingPage() {
   const adAccountId = s?.meta && "adAccountId" in s.meta ? s.meta.adAccountId ?? null : null;
   const availableAccounts =
     s?.meta && "availableAccounts" in s.meta ? s.meta.availableAccounts ?? [] : [];
+  const accountUnavailable =
+    s?.meta && "accountUnavailable" in s.meta ? !!s.meta.accountUnavailable : false;
   const onboardingDone = !!s?.onboardingCompleted;
 
-  // Já concluiu: vai pro dashboard.
+  // Já concluiu e tem conta válida: vai pro dashboard.
   useEffect(() => {
-    if (status.data && connected && adAccountId && onboardingDone) {
+    if (status.data && connected && adAccountId && onboardingDone && !accountUnavailable) {
       navigate({ to: "/dashboard" });
     }
-  }, [status.data, connected, adAccountId, onboardingDone, navigate]);
+  }, [status.data, connected, adAccountId, onboardingDone, accountUnavailable, navigate]);
 
   const connectMutation = useMutation({
     mutationFn: async () => startOAuth(),
