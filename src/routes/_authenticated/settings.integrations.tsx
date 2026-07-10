@@ -235,6 +235,18 @@ function IntegrationsPage() {
                 </Button>
                 <Button
                   variant="outline"
+                  onClick={() => refresh.mutate()}
+                  disabled={refresh.isPending}
+                >
+                  {refresh.isPending ? (
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="mr-2 size-4" />
+                  )}
+                  Atualizar contas
+                </Button>
+                <Button
+                  variant="outline"
                   onClick={() => connect.mutate()}
                   disabled={connect.isPending}
                 >
