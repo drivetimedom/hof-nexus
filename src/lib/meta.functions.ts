@@ -28,6 +28,12 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
         .eq("user_id", userId)
         .maybeSingle(),
     ]);
+    const availableAccounts =
+      (conn?.available_accounts as Array<{ id: string; name: string }> | null) ?? [];
+    const accountUnavailable =
+      !!conn?.ad_account_id &&
+      availableAccounts.length > 0 &&
+      !availableAccounts.some((a) => a.id === conn.ad_account_id);
     return {
       onboardingCompleted: !!profile?.onboarding_completed,
       email: profile?.email ?? null,
@@ -37,9 +43,10 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
             connected: true,
             adAccountId: conn.ad_account_id,
             accountName: conn.account_name,
-            availableAccounts: (conn.available_accounts as Array<{ id: string; name: string }>) ?? [],
+            availableAccounts,
             lastSyncedAt: conn.last_synced_at,
             tokenExpiresAt: conn.token_expires_at,
+            accountUnavailable,
           }
         : { connected: false as const },
     };
