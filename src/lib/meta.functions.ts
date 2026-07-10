@@ -276,18 +276,20 @@ export const getMyCampaigns = createServerFn({ method: "GET" })
     const since = new Date();
     since.setDate(since.getDate() - data.days);
     const fmt = (d: Date) => d.toISOString().slice(0, 10);
-    const [insights, statuses] = await Promise.all([
-      fetchCampaignInsights({
-        accessToken: conn.access_token,
-        adAccountId: conn.ad_account_id,
-        since: fmt(since),
-        until: fmt(until),
-      }),
-      fetchCampaignStatuses({
-        accessToken: conn.access_token,
-        adAccountId: conn.ad_account_id,
-      }).catch(() => []),
-    ]);
+    const [insights, statuses] = await withAccountGuard(userId, () =>
+      Promise.all([
+        fetchCampaignInsights({
+          accessToken: conn.access_token,
+          adAccountId: conn.ad_account_id!,
+          since: fmt(since),
+          until: fmt(until),
+        }),
+        fetchCampaignStatuses({
+          accessToken: conn.access_token,
+          adAccountId: conn.ad_account_id!,
+        }).catch(() => [] as Awaited<ReturnType<typeof fetchCampaignStatuses>>),
+      ])
+    );
     const statusMap = new Map(statuses.map((s) => [s.id, s.effective_status]));
     const seen = new Set<string>();
     const campaigns = insights.map((row) => {
