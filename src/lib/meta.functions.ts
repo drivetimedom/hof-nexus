@@ -28,6 +28,12 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
         .eq("user_id", userId)
         .maybeSingle(),
     ]);
+    const availableAccounts =
+      (conn?.available_accounts as Array<{ id: string; name: string }> | null) ?? [];
+    const accountUnavailable =
+      !!conn?.ad_account_id &&
+      availableAccounts.length > 0 &&
+      !availableAccounts.some((a) => a.id === conn.ad_account_id);
     return {
       onboardingCompleted: !!profile?.onboarding_completed,
       email: profile?.email ?? null,
@@ -37,9 +43,10 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
             connected: true,
             adAccountId: conn.ad_account_id,
             accountName: conn.account_name,
-            availableAccounts: (conn.available_accounts as Array<{ id: string; name: string }>) ?? [],
+            availableAccounts,
             lastSyncedAt: conn.last_synced_at,
             tokenExpiresAt: conn.token_expires_at,
+            accountUnavailable,
           }
         : { connected: false as const },
     };
@@ -83,7 +90,7 @@ export const refreshAdAccounts = createServerFn({ method: "POST" })
     const { fetchAdAccounts } = await import("@/lib/meta.server");
     const { data: conn, error } = await supabaseAdmin
       .from("meta_connections")
-      .select("access_token")
+      .select("access_token,ad_account_id")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -95,12 +102,49 @@ export const refreshAdAccounts = createServerFn({ method: "POST" })
       name: a.name,
       currency: a.currency,
     }));
-    await supabaseAdmin
-      .from("meta_connections")
-      .update({ available_accounts: safe })
-      .eq("user_id", userId);
-    return { accounts: safe };
+    const stillAvailable =
+      !conn.ad_account_id || safe.some((a) => a.id === conn.ad_account_id);
+    const update: {
+      available_accounts: typeof safe;
+      ad_account_id?: string | null;
+      account_name?: string | null;
+    } = { available_accounts: safe };
+    if (!stillAvailable) {
+      update.ad_account_id = null;
+      update.account_name = null;
+    }
+    await supabaseAdmin.from("meta_connections").update(update).eq("user_id", userId);
+    return { accounts: safe, currentStillAvailable: stillAvailable };
   });
+
+async function clearSelectedAccount(userId: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  await supabaseAdmin
+    .from("meta_connections")
+    .update({ ad_account_id: null, account_name: null })
+    .eq("user_id", userId);
+}
+
+function isMetaAccountError(message: string) {
+  return /does not exist|Unsupported get request|Object with ID|Cannot access|permission|\(#100\)|\(#803\)|\(#200\)/i.test(
+    message
+  );
+}
+
+async function withAccountGuard<T>(userId: string, fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (isMetaAccountError(msg)) {
+      await clearSelectedAccount(userId);
+      throw new Error(
+        "A conta de anúncios selecionada não está mais disponível na Meta. Escolha outra conta em Configurações → Integrações."
+      );
+    }
+    throw e;
+  }
+}
 
 export const selectAdAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -172,12 +216,14 @@ export const syncMyMetrics = createServerFn({ method: "POST" })
     const since = new Date();
     since.setDate(since.getDate() - 30);
     const fmt = (d: Date) => d.toISOString().slice(0, 10);
-    const rows = await fetchDailyInsights({
-      accessToken: conn.access_token,
-      adAccountId: conn.ad_account_id,
-      since: fmt(since),
-      until: fmt(until),
-    });
+    const rows = await withAccountGuard(userId, () =>
+      fetchDailyInsights({
+        accessToken: conn.access_token,
+        adAccountId: conn.ad_account_id!,
+        since: fmt(since),
+        until: fmt(until),
+      })
+    );
     const normalized = rows.map((r) => normalizeInsight(r, userId, conn.ad_account_id!));
     if (normalized.length > 0) {
       const { error: upErr } = await supabaseAdmin
@@ -230,18 +276,20 @@ export const getMyCampaigns = createServerFn({ method: "GET" })
     const since = new Date();
     since.setDate(since.getDate() - data.days);
     const fmt = (d: Date) => d.toISOString().slice(0, 10);
-    const [insights, statuses] = await Promise.all([
-      fetchCampaignInsights({
-        accessToken: conn.access_token,
-        adAccountId: conn.ad_account_id,
-        since: fmt(since),
-        until: fmt(until),
-      }),
-      fetchCampaignStatuses({
-        accessToken: conn.access_token,
-        adAccountId: conn.ad_account_id,
-      }).catch(() => []),
-    ]);
+    const [insights, statuses] = await withAccountGuard(userId, () =>
+      Promise.all([
+        fetchCampaignInsights({
+          accessToken: conn.access_token,
+          adAccountId: conn.ad_account_id!,
+          since: fmt(since),
+          until: fmt(until),
+        }),
+        fetchCampaignStatuses({
+          accessToken: conn.access_token,
+          adAccountId: conn.ad_account_id!,
+        }).catch(() => [] as Awaited<ReturnType<typeof fetchCampaignStatuses>>),
+      ])
+    );
     const statusMap = new Map(statuses.map((s) => [s.id, s.effective_status]));
     const seen = new Set<string>();
     const campaigns = insights.map((row) => {

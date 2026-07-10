@@ -62,14 +62,16 @@ function OnboardingPage() {
   const adAccountId = s?.meta && "adAccountId" in s.meta ? s.meta.adAccountId ?? null : null;
   const availableAccounts =
     s?.meta && "availableAccounts" in s.meta ? s.meta.availableAccounts ?? [] : [];
+  const accountUnavailable =
+    s?.meta && "accountUnavailable" in s.meta ? !!s.meta.accountUnavailable : false;
   const onboardingDone = !!s?.onboardingCompleted;
 
-  // Já concluiu: vai pro dashboard.
+  // Já concluiu e tem conta válida: vai pro dashboard.
   useEffect(() => {
-    if (status.data && connected && adAccountId && onboardingDone) {
+    if (status.data && connected && adAccountId && onboardingDone && !accountUnavailable) {
       navigate({ to: "/dashboard" });
     }
-  }, [status.data, connected, adAccountId, onboardingDone, navigate]);
+  }, [status.data, connected, adAccountId, onboardingDone, accountUnavailable, navigate]);
 
   const connectMutation = useMutation({
     mutationFn: async () => startOAuth(),
@@ -142,7 +144,15 @@ function OnboardingPage() {
             </StepCard>
           )}
 
-          {connected && !adAccountId && (
+          {connected && accountUnavailable && (
+            <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+              A conta de anúncios que você tinha selecionada não está mais disponível na Meta
+              (pode ter sido removida, ou seu acesso revogado). Escolha outra conta abaixo para
+              continuar.
+            </div>
+          )}
+
+          {connected && (!adAccountId || accountUnavailable) && (
             <SelectAccountStep
               accounts={availableAccounts}
               finalizing={finalizing}
@@ -151,7 +161,7 @@ function OnboardingPage() {
             />
           )}
 
-          {connected && adAccountId && !onboardingDone && (
+          {connected && adAccountId && !accountUnavailable && !onboardingDone && (
             <StepCard
               index={3}
               title="Finalizando configuração"

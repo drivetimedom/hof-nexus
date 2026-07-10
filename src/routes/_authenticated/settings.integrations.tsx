@@ -9,8 +9,9 @@ import {
   disconnectMeta,
   selectAdAccount,
   syncMyMetrics,
+  refreshAdAccounts,
 } from "@/lib/meta.functions";
-import { CheckCircle2, Loader2, RefreshCw, Unplug, Plug, RotateCcw } from "lucide-react";
+import { CheckCircle2, Loader2, RefreshCw, Unplug, Plug, RotateCcw, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -76,6 +77,19 @@ function IntegrationsPage() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+  const refreshAccounts = useServerFn(refreshAdAccounts);
+  const refresh = useMutation({
+    mutationFn: async () => refreshAccounts(),
+    onSuccess: ({ currentStillAvailable }) => {
+      qc.invalidateQueries({ queryKey: ["onboarding-status"] });
+      if (currentStillAvailable) toast.success("Lista de contas atualizada.");
+      else
+        toast.error(
+          "A conta anteriormente selecionada não existe mais. Escolha outra abaixo."
+        );
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const meta = status.data?.meta;
   const connected = !!meta?.connected;
@@ -83,9 +97,11 @@ function IntegrationsPage() {
   const accountName = meta && "accountName" in meta ? meta.accountName ?? null : null;
   const lastSyncedAt = meta && "lastSyncedAt" in meta ? meta.lastSyncedAt ?? null : null;
   const accounts = meta && "availableAccounts" in meta ? meta.availableAccounts ?? [] : [];
+  const accountUnavailable =
+    meta && "accountUnavailable" in meta ? !!meta.accountUnavailable : false;
 
-  // Se conectado sem conta escolhida, força modo de seleção.
-  const mustPick = connected && !adAccountId;
+  // Se conectado sem conta escolhida (ou conta indisponível), força modo de seleção.
+  const mustPick = connected && (!adAccountId || accountUnavailable);
   const showAccountList = switching || mustPick;
 
   return (
@@ -129,6 +145,16 @@ function IntegrationsPage() {
 
           {connected && (
             <div className="mt-6 space-y-4">
+              {accountUnavailable && (
+                <div className="flex items-start gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+                  <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                  <div>
+                    A conta <span className="font-medium">{accountName ?? adAccountId}</span>{" "}
+                    não está mais disponível na Meta (removida ou sem acesso). Escolha outra
+                    conta abaixo ou atualize a lista.
+                  </div>
+                </div>
+              )}
               <div className="rounded-lg border border-border bg-card/40 p-4">
                 <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
                   Conta atualmente conectada
@@ -206,6 +232,18 @@ function IntegrationsPage() {
                 >
                   <RotateCcw className="mr-2 size-4" />
                   {switching ? "Cancelar troca" : "Trocar conta"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => refresh.mutate()}
+                  disabled={refresh.isPending}
+                >
+                  {refresh.isPending ? (
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="mr-2 size-4" />
+                  )}
+                  Atualizar contas
                 </Button>
                 <Button
                   variant="outline"
