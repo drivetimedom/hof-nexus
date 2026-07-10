@@ -30,7 +30,8 @@ function DashboardPage() {
     if (!status.data) return;
     const m = status.data.meta;
     const hasAcc = m && "adAccountId" in m ? !!m.adAccountId : false;
-    if (!status.data.onboardingCompleted || !m?.connected || !hasAcc) {
+    const unavailable = m && "accountUnavailable" in m ? !!m.accountUnavailable : false;
+    if (!status.data.onboardingCompleted || !m?.connected || !hasAcc || unavailable) {
       navigate({ to: "/onboarding" });
     }
   }, [status.data, navigate]);
@@ -38,10 +39,12 @@ function DashboardPage() {
   const meta = status.data?.meta;
   const metaConnected = !!meta?.connected;
   const adAccountId = meta && "adAccountId" in meta ? meta.adAccountId ?? null : null;
+  const accountUnavailable =
+    meta && "accountUnavailable" in meta ? !!meta.accountUnavailable : false;
   const metrics = useQuery({
     queryKey: ["metrics", period],
     queryFn: () => getMetrics({ data: { days: period === "7d" ? 7 : period === "30d" ? 30 : 90 } }),
-    enabled: metaConnected && !!adAccountId,
+    enabled: metaConnected && !!adAccountId && !accountUnavailable,
   });
 
   if (status.isLoading) {
