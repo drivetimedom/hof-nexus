@@ -145,6 +145,16 @@ function IntegrationsPage() {
 
           {connected && (
             <div className="mt-6 space-y-4">
+              {accountUnavailable && (
+                <div className="flex items-start gap-3 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+                  <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                  <div>
+                    A conta <span className="font-medium">{accountName ?? adAccountId}</span>{" "}
+                    não está mais disponível na Meta (removida ou sem acesso). Escolha outra
+                    conta abaixo ou atualize a lista.
+                  </div>
+                </div>
+              )}
               <div className="rounded-lg border border-border bg-card/40 p-4">
                 <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
                   Conta atualmente conectada
