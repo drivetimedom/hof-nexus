@@ -216,12 +216,14 @@ export const syncMyMetrics = createServerFn({ method: "POST" })
     const since = new Date();
     since.setDate(since.getDate() - 30);
     const fmt = (d: Date) => d.toISOString().slice(0, 10);
-    const rows = await fetchDailyInsights({
-      accessToken: conn.access_token,
-      adAccountId: conn.ad_account_id,
-      since: fmt(since),
-      until: fmt(until),
-    });
+    const rows = await withAccountGuard(userId, () =>
+      fetchDailyInsights({
+        accessToken: conn.access_token,
+        adAccountId: conn.ad_account_id!,
+        since: fmt(since),
+        until: fmt(until),
+      })
+    );
     const normalized = rows.map((r) => normalizeInsight(r, userId, conn.ad_account_id!));
     if (normalized.length > 0) {
       const { error: upErr } = await supabaseAdmin
