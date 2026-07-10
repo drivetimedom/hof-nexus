@@ -27,7 +27,10 @@ function DashboardPage() {
   const status = useQuery({ queryKey: ["onboarding-status"], queryFn: () => getStatus() });
 
   useEffect(() => {
-    if (status.data && !status.data.onboardingCompleted) {
+    if (!status.data) return;
+    const m = status.data.meta;
+    const hasAcc = m && "adAccountId" in m ? !!m.adAccountId : false;
+    if (!status.data.onboardingCompleted || !m?.connected || !hasAcc) {
       navigate({ to: "/onboarding" });
     }
   }, [status.data, navigate]);
