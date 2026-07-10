@@ -144,7 +144,15 @@ function OnboardingPage() {
             </StepCard>
           )}
 
-          {connected && !adAccountId && (
+          {connected && accountUnavailable && (
+            <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+              A conta de anúncios que você tinha selecionada não está mais disponível na Meta
+              (pode ter sido removida, ou seu acesso revogado). Escolha outra conta abaixo para
+              continuar.
+            </div>
+          )}
+
+          {connected && (!adAccountId || accountUnavailable) && (
             <SelectAccountStep
               accounts={availableAccounts}
               finalizing={finalizing}
@@ -153,7 +161,7 @@ function OnboardingPage() {
             />
           )}
 
-          {connected && adAccountId && !onboardingDone && (
+          {connected && adAccountId && !accountUnavailable && !onboardingDone && (
             <StepCard
               index={3}
               title="Finalizando configuração"
