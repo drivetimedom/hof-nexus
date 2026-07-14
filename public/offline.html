@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sem conexão — HOF Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0C0A08" />
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(1200px 600px at 50% -10%, rgba(249,115,22,0.18), transparent 60%),
+          radial-gradient(800px 500px at 100% 100%, rgba(249,115,22,0.08), transparent 60%),
+          #0C0A08;
+        color: #F5F5F4;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+      }
+      .card {
+        max-width: 26rem;
+        width: 100%;
+        text-align: center;
+        padding: 2.5rem 2rem;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 1.25rem;
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(12px);
+      }
+      .icon {
+        width: 64px; height: 64px;
+        margin: 0 auto 1.25rem;
+        display: grid; place-items: center;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #F97316, #EA580C);
+        color: #0C0A08;
+        font-weight: 800; font-size: 28px;
+        box-shadow: 0 20px 40px -18px rgba(249,115,22,0.6);
+      }
+      h1 { font-size: 1.25rem; margin: 0 0 0.5rem; letter-spacing: -0.01em; }
+      p { color: rgba(245,245,244,0.65); margin: 0 0 1.75rem; font-size: 0.9rem; line-height: 1.55; }
+      button {
+        display: inline-flex; align-items: center; justify-content: center;
+        gap: 0.5rem;
+        padding: 0.7rem 1.25rem;
+        border-radius: 0.6rem;
+        border: 0;
+        background: #F97316; color: #0C0A08;
+        font-weight: 600; font-size: 0.9rem;
+        cursor: pointer;
+        transition: transform .15s ease, background .15s ease;
+      }
+      button:hover { background: #FB923C; transform: translateY(-1px); }
+      .hint { margin-top: 1rem; font-size: 0.75rem; color: rgba(245,245,244,0.4); }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="icon">H</div>
+      <h1>Você está offline</h1>
+      <p>Não conseguimos conectar aos servidores do HOF Analytics. Verifique sua conexão e tente novamente — seus dados em cache continuam disponíveis assim que voltar online.</p>
+      <button onclick="location.reload()">Tentar novamente</button>
+      <div class="hint">HOF Circle Analytics</div>
+    </div>
+    <script>
+      window.addEventListener("online", () => location.reload());
+    </script>
+  </body>
+</html>
